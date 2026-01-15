@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aitag v3.0.0 사전 안내</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        /* Light Mode Variables */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --accent-secondary: #1a7f37;
+            --border: #d0d7de;
+            --warning: #9a6700;
+            --shadow: rgba(31, 35, 40, 0.12);
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-secondary: #238636;
+            --border: #30363d;
+            --warning: #d29922;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* System preference auto-detect */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0d1117;
+                --bg-secondary: #161b22;
+                --bg-tertiary: #21262d;
+                --text-primary: #e6edf3;
+                --text-secondary: #8b949e;
+                --accent: #58a6ff;
+                --accent-secondary: #238636;
+                --border: #30363d;
+                --warning: #d29922;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .theme-toggle-icon {
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            line-height: 1;
+        }
+
+        .theme-toggle-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Light/Dark mode text toggle */
+        .light-text, .dark-text {
+            display: none;
+        }
+
+        :root:not([data-theme]) .light-text,
+        [data-theme="light"] .light-text {
+            display: inline;
+        }
+
+        :root:not([data-theme]) .dark-text {
+            display: none;
+        }
+
+        [data-theme="dark"] .dark-text {
+            display: inline;
+        }
+
+        [data-theme="dark"] .light-text {
+            display: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) .light-text {
+                display: none;
+            }
+            :root:not([data-theme]) .dark-text {
+                display: inline;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 48px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .launch-date {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 24px;
+            border-radius: 24px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 48px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .toc h2 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .toc ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .toc a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 64px;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent);
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 32px 0 16px 0;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+            color: var(--text-secondary);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid var(--border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        td {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent);
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .info-box.warning {
+            border-left-color: var(--warning);
+        }
+
+        .info-box p {
+            margin: 0;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .feature-card h4 {
+            margin: 0 0 8px 0;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .feature-card p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Flow Diagram */
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .flow-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .flow-arrow {
+            color: var(--accent);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Mermaid */
+        .mermaid {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .steps li {
+            position: relative;
+            padding-left: 48px;
+            margin-bottom: 16px;
+        }
+
+        .steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Metrics */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .metric {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Contact */
+        .contact-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .contact-box h3 {
+            margin-top: 0;
+        }
+
+        .contact-box a {
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 48px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .toc ul,
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .flow {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+            }
+
+            .theme-toggle-label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="라이트/다크 모드 전환">
+        <span class="theme-toggle-icon">
+            <span class="light-text">○</span>
+            <span class="dark-text">●</span>
+        </span>
+        <span class="theme-toggle-label">라이트/다크 모드</span>
+    </button>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>aitag v3.0.0 사전 안내</h1>
+            <p class="subtitle">대체텍스트 생성 서비스가 새롭게 업그레이드됩니다</p>
+            <span class="launch-date">런칭 예정일: 2025-02-11</span>
+        </header>
+
+        <!-- Table of Contents -->
+        <nav class="toc">
+            <h2>목차</h2>
+            <ul>
+                <li><a href="#overview">1. 개요</a></li>
+                <li><a href="#changes">2. 주요 변경사항</a></li>
+                <li><a href="#features">3. 신규 기능 상세</a></li>
+                <li><a href="#guide">4. 사용 가이드</a></li>
+                <li><a href="#schedule">5. 개발 일정</a></li>
+                <li><a href="#performance">6. 성능 목표</a></li>
+                <li><a href="#future">7. 향후 계획</a></li>
+                <li><a href="#notice">8. 안내 사항</a></li>
+                <li><a href="#contact">9. 문의</a></li>
+            </ul>
+        </nav>
+
+        <!-- 1. 개요 -->
+        <section id="overview">
+            <h2>1. 개요</h2>
+            <p>안녕하세요, aitag 개발팀입니다.</p>
+            <p>aitag 대체텍스트 생성 서비스가 v3.0.0으로 업그레이드됩니다. 이번 버전은 새로운 AWS 인프라 기반으로 재구축되어, 안정성, 확장성, 운영 효율성이 크게 향상됩니다.</p>
+            <p>또한 웹 기반 사용자 인터페이스가 새롭게 추가되어, 더욱 편리하게 서비스를 이용하실 수 있습니다.</p>
+
+            <table>
+                <tr>
+                    <th>항목</th>
+                    <th>내용</th>
+                </tr>
+                <tr>
+                    <td>버전</td>
+                    <td>v3.0.0</td>
+                </tr>
+                <tr>
+                    <td>런칭 예정일</td>
+                    <td>2025-02-11</td>
+                </tr>
+                <tr>
+                    <td>개발 기간</td>
+                    <td>4주 (2025-01-12 ~ 2025-02-10)</td>
+                </tr>
+                <tr>
+                    <td>주요 변경</td>
+                    <td>신규 인프라, 웹 UI, 실시간 모니터링, 히스토리/일괄처리 기능</td>
+                </tr>
+            </table>
+
+            <h3>v3.0.0 핵심 변화</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>신규 인프라</h4>
+                    <p>AWS 기반으로 안정성 강화</p>
+                </div>
+                <div class="feature-card">
+                    <h4>웹 UI</h4>
+                    <p>Streamlit 기반 사용자 인터페이스</p>
+                </div>
+                <div class="feature-card">
+                    <h4>실시간 모니터링</h4>
+                    <p>Sentry + Slack 연동</p>
+                </div>
+                <div class="feature-card">
+                    <h4>신규 기능</h4>
+                    <p>히스토리 / 일괄처리</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 주요 변경사항 -->
+        <section id="changes">
+            <h2>2. 주요 변경사항</h2>
+            
+            <h3>2.1 기존 vs 신규 비교</h3>
+            <table>
+                <tr>
+                    <th>항목</th>
+                    <th>기존</th>
+                    <th>aitag v3.0.0</th>
+                </tr>
+                <tr>
+                    <td>인프라</td>
+                    <td>EC2 + Docker</td>
+                    <td>새 AWS 인프라 (EC2, VPC, S3, Redis)</td>
+                </tr>
+                <tr>
+                    <td>인증</td>
+                    <td>없음 (외부 API 인증)</td>
+                    <td>JWT + API Key</td>
+                </tr>
+                <tr>
+                    <td>관리 도구</td>
+                    <td>없음</td>
+                    <td>Admin UI</td>
+                </tr>
+                <tr>
+                    <td>이력 관리</td>
+                    <td>파일 로깅만</td>
+                    <td>히스토리 UI</td>
+                </tr>
+                <tr>
+                    <td>대량 처리</td>
+                    <td>내부용만</td>
+                    <td>일괄처리 UI</td>
+                </tr>
+                <tr>
+                    <td>클라이언트</td>
+                    <td>API만 제공</td>
+                    <td>Streamlit 웹 UI</td>
+                </tr>
+                <tr>
+                    <td>모니터링</td>
+                    <td>Slack 알림만</td>
+                    <td>Sentry + Slack 알림</td>
+                </tr>
+            </table>
+
+            <div class="info-box">
+                <p><strong>참고:</strong> AI 모델은 기존과 동일하게 외부 LLM API(Gemini)를 사용합니다.</p>
+            </div>
+        </section>
+
+        <!-- 3. 신규 기능 상세 -->
+        <section id="features">
+            <h2>3. 신규 기능 상세</h2>
+
+            <h3>3.1 웹 기반 사용자 인터페이스</h3>
+            <p>기존 API 방식에서 벗어나, 웹 브라우저에서 직접 서비스를 이용할 수 있습니다.</p>
+
+            <table>
+                <tr>
+                    <th>기능</th>
+                    <th>설명</th>
+                </tr>
+                <tr>
+                    <td>로그인/인증</td>
+                    <td>개인 계정으로 로그인하여 사용 이력 관리</td>
+                </tr>
+                <tr>
+                    <td>메인 서비스</td>
+                    <td>이미지 업로드 후 대체텍스트 즉시 생성</td>
+                </tr>
+                <tr>
+                    <td>히스토리</td>
+                    <td>이전 생성 결과 검색 및 재사용</td>
+                </tr>
+                <tr>
+                    <td>대량 업로드</td>
+                    <td>여러 이미지를 한 번에 처리</td>
+                </tr>
+                <tr>
+                    <td>Admin</td>
+                    <td>사용자 및 클라이언트 관리 (관리자 전용)</td>
+                </tr>
+            </table>
+
+            <h3>3.2 인증 시스템</h3>
+            <p>안전한 서비스 이용을 위한 인증 시스템이 도입됩니다.</p>
+
+            <div class="flow">
+                <div class="flow-item">JWT 토큰<br><small>세션 관리</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">API Key<br><small>외부 연동</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">RBAC<br><small>권한 제어</small></div>
+            </div>
+
+            <table>
+                <tr>
+                    <th>방식</th>
+                    <th>용도</th>
+                </tr>
+                <tr>
+                    <td>JWT</td>
+                    <td>웹 UI 로그인 시 세션 관리</td>
+                </tr>
+                <tr>
+                    <td>API Key</td>
+                    <td>외부 시스템 연동 시 인증</td>
+                </tr>
+                <tr>
+                    <td>RBAC</td>
+                    <td>역할 기반 접근 권한 제어 (Admin, User 등)</td>
+                </tr>
+            </table>
+
+            <div class="info-box">
+                <p><strong>안내:</strong> 서비스 런칭 전 계정 정보를 별도로 전달드릴 예정입니다.</p>
+            </div>
+
+            <h3>3.3 히스토리 기능</h3>
+            <p>모든 대체텍스트 생성 결과가 저장되어, 언제든지 조회하고 재사용할 수 있습니다.</p>
+
+            <h4>주요 기능</h4>
+            <ul>
+                <li>날짜 범위, 키워드, AI 모델별 검색</li>
+                <li>이전 결과 상세 보기 및 복사</li>
+                <li>생성 이력 통계 확인</li>
+            </ul>
+
+            <h4>기대 효과</h4>
+            <ul>
+                <li>동일 이미지 재처리 불필요</li>
+                <li>과거 결과 참조 및 일관성 유지</li>
+                <li>사용량 현황 파악</li>
+            </ul>
+
+            <h3>3.4 일괄처리 기능</h3>
+            <p>대량의 이미지를 한 번에 처리할 수 있는 일괄처리 기능이 추가됩니다.</p>
+
+            <div class="flow">
+                <div class="flow-item">이미지 선택<br><small>(복수)</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">AI 모델 선택</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">일괄 생성</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">진행률 확인</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">결과 다운로드</div>
+            </div>
+
+            <h4>처리 방식</h4>
+            <ol class="steps">
+                <li>여러 이미지 파일 선택 (드래그 앤 드롭 지원)</li>
+                <li>AI 모델 선택 후 일괄 생성 실행</li>
+                <li>진행률 실시간 확인</li>
+                <li>완료 후 결과 일괄 다운로드</li>
+            </ol>
+
+            <h3>3.5 실시간 모니터링</h3>
+            <p>서비스 안정성 확보를 위한 실시간 모니터링 시스템이 도입됩니다.</p>
+
+            <div class="flow">
+                <div class="flow-item">오류 발생</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">Sentry<br><small>실시간 감지</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">Slack<br><small>담당자 알림</small></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-item">신속 대응</div>
+            </div>
+
+            <table>
+                <tr>
+                    <th>효과</th>
+                    <th>설명</th>
+                </tr>
+                <tr>
+                    <td>신속한 대응</td>
+                    <td>문제 발생 즉시 담당자에게 알림</td>
+                </tr>
+                <tr>
+                    <td>서비스 중단 최소화</td>
+                    <td>에러 패턴 분석으로 사전 예방</td>
+                </tr>
+                <tr>
+                    <td>투명한 운영</td>
+                    <td>성능 지표 상시 모니터링</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 4. 사용 가이드 -->
+        <section id="guide">
+            <h2>4. 사용 가이드 (예정)</h2>
+
+            <div class="info-box">
+                <p>서비스 URL과 계정 정보는 런칭 전 별도 안내드립니다.</p>
+                <p>지원 이미지 형식: JPG, PNG, GIF, WebP</p>
+            </div>
+
+            <h3>4.1 로그인</h3>
+            <ol class="steps">
+                <li>웹 브라우저에서 aitag 서비스 URL 접속</li>
+                <li>발급받은 계정 정보로 로그인</li>
+                <li>로그인 성공 시 메인 서비스 화면으로 이동</li>
+            </ol>
+
+            <h3>4.2 대체텍스트 생성</h3>
+            <ol class="steps">
+                <li>메인 화면에서 이미지 업로드 영역 클릭 또는 드래그 앤 드롭</li>
+                <li>AI 모델 확인 (Gemini)</li>
+                <li>생성 버튼 클릭</li>
+                <li>결과 확인 후 복사 또는 다운로드</li>
+            </ol>
+
+            <h3>4.3 히스토리 조회</h3>
+            <ol class="steps">
+                <li>상단 메뉴에서 '히스토리' 클릭</li>
+                <li>검색 조건 설정 (날짜, 키워드, 모델 등)</li>
+                <li>검색 결과에서 원하는 항목 클릭</li>
+                <li>상세 보기에서 결과 복사 또는 재생성</li>
+            </ol>
+
+            <h3>4.4 대량 업로드</h3>
+            <ol class="steps">
+                <li>메인 화면에서 '대량 업로드' 탭 선택</li>
+                <li>여러 이미지 파일 선택</li>
+                <li>AI 모델 선택 후 '일괄 생성' 클릭</li>
+                <li>진행률 확인 (처리 중 다른 작업 가능)</li>
+                <li>완료 알림 후 결과 다운로드</li>
+            </ol>
+        </section>
+
+        <!-- 5. 개발 일정 -->
+        <section id="schedule">
+            <h2>5. 개발 일정</h2>
+
+            <h3>5.1 전체 타임라인</h3>
+            <div class="mermaid">
+                flowchart TB
+                    W1["Week 1: 기반 구축"]
+                    W2["Week 2: 핵심 기능"]
+                    W3["Week 3: 완성"]
+                    W4["Week 4: QA 및 배포"]
+                    LAUNCH["런칭"]
+                    
+                    W1 --> W2 --> W3 --> W4 --> LAUNCH
+            </div>
+
+            <h3>5.2 주간 마일스톤</h3>
+            <table>
+                <tr>
+                    <th>단계</th>
+                    <th>기간</th>
+                    <th>주요 작업</th>
+                    <th>완료 기준</th>
+                </tr>
+                <tr>
+                    <td>Week 1</td>
+                    <td>1/12 - 1/18</td>
+                    <td>기반 구축</td>
+                    <td>인프라 구동, 인증 동작, 로그인 UI</td>
+                </tr>
+                <tr>
+                    <td>Week 2</td>
+                    <td>1/19 - 1/25</td>
+                    <td>핵심 기능</td>
+                    <td>대체텍스트 생성, Admin/히스토리 UI</td>
+                </tr>
+                <tr>
+                    <td>Week 3</td>
+                    <td>1/26 - 2/1</td>
+                    <td>완성</td>
+                    <td>일괄처리, 모니터링 연동</td>
+                </tr>
+                <tr>
+                    <td>Week 4</td>
+                    <td>2/2 - 2/10</td>
+                    <td>QA 및 배포</td>
+                    <td>통합 테스트, 버그 수정, 배포</td>
+                </tr>
+                <tr>
+                    <td>런칭</td>
+                    <td>2/11</td>
+                    <td>정식 오픈</td>
+                    <td>v3.0.0 서비스 시작</td>
+                </tr>
+            </table>
+
+            <h3>5.3 Week별 상세</h3>
+
+            <h4>Week 1: 기반 구축 (1/12 - 1/18)</h4>
+            <ul>
+                <li>AWS 인프라 구축 (EC2, VPC, 보안그룹)</li>
+                <li>S3, Redis 설정</li>
+                <li>JWT + API Key + RBAC 인증 시스템</li>
+                <li>로그인 화면 및 세션 관리</li>
+            </ul>
+
+            <h4>Week 2: 핵심 기능 (1/19 - 1/25)</h4>
+            <ul>
+                <li>Admin API 및 UI (사용자/클라이언트 관리)</li>
+                <li>메인 서비스 UI (이미지 업로드 → 대체텍스트 생성)</li>
+                <li>히스토리 API 및 UI (검색, 필터, 조회)</li>
+            </ul>
+
+            <h4>Week 3: 완성 (1/26 - 2/1)</h4>
+            <ul>
+                <li>일괄처리 API 및 대량 업로드 UI</li>
+                <li>Sentry 에러 모니터링 + Slack 알림 연동</li>
+                <li>성능 최적화</li>
+            </ul>
+
+            <h4>Week 4: QA 및 배포 (2/2 - 2/10)</h4>
+            <ul>
+                <li>전체 기능 통합 테스트</li>
+                <li>버그 수정 및 안정화</li>
+                <li>스테이징 환경 배포 및 검증</li>
+                <li>운영 환경 배포 준비</li>
+            </ul>
+
+            <div class="info-box warning">
+                <p><strong>참고:</strong> 상기 일정은 예정이며, 변경 시 사전 안내드리겠습니다.</p>
+            </div>
+        </section>
+
+        <!-- 6. 성능 목표 -->
+        <section id="performance">
+            <h2>6. 성능 목표</h2>
+            <p>v3.0.0은 다음 성능 목표를 충족하도록 설계됩니다.</p>
+
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">2초</div>
+                    <div class="metric-label">API 응답시간 (P95)</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">10+</div>
+                    <div class="metric-label">동시 처리량 (req/s)</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">&lt;1%</div>
+                    <div class="metric-label">에러율</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">99%+</div>
+                    <div class="metric-label">가용성</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 향후 계획 -->
+        <section id="future">
+            <h2>7. 향후 계획</h2>
+            <p>v3.0.0 런칭 이후, 서비스 안정화 단계에서 아래 기능들을 순차적으로 추가할 예정입니다.</p>
+
+            <div class="mermaid">
+                flowchart TB
+                    subgraph MVP["v3.0.0 (2/11 런칭)"]
+                        M1["대체텍스트 생성"]
+                        M2["인증/권한"]
+                        M3["히스토리"]
+                        M4["일괄처리"]
+                        M5["모니터링"]
+                    end
+                    
+                    subgraph FUTURE["향후 추가 예정"]
+                        F1["상세 통계"]
+                        F2["결과 내보내기"]
+                        F3["프롬프트 관리"]
+                    end
+                    
+                    MVP --> FUTURE
+            </div>
+
+            <table>
+                <tr>
+                    <th>기능</th>
+                    <th>설명</th>
+                    <th>현재 대체 방안</th>
+                </tr>
+                <tr>
+                    <td>상세 통계 (Analytics)</td>
+                    <td>사용량/성능 대시보드</td>
+                    <td>Sentry 기본 통계</td>
+                </tr>
+                <tr>
+                    <td>결과 내보내기</td>
+                    <td>CSV/Excel Export</td>
+                    <td>복사/다운로드 기능</td>
+                </tr>
+                <tr>
+                    <td>프롬프트 관리 UI</td>
+                    <td>웹에서 프롬프트 수정</td>
+                    <td>담당자에게 요청</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 8. 안내 사항 -->
+        <section id="notice">
+            <h2>8. 안내 사항</h2>
+
+            <h3>8.1 서비스 전환 안내</h3>
+            <ul>
+                <li><strong>기존 API:</strong> v3.0.0 런칭 후에도 당분간 유지됩니다.</li>
+                <li><strong>신규 웹 UI:</strong> 런칭일(2/11)부터 이용 가능합니다.</li>
+                <li><strong>계정 발급:</strong> 런칭 전 별도로 계정 정보를 전달드립니다.</li>
+            </ul>
+
+            <h3>8.2 변경되지 않는 것</h3>
+            <table>
+                <tr>
+                    <th>항목</th>
+                    <th>내용</th>
+                </tr>
+                <tr>
+                    <td>AI 모델</td>
+                    <td>Gemini 동일</td>
+                </tr>
+                <tr>
+                    <td>대체텍스트 품질</td>
+                    <td>기존과 동일</td>
+                </tr>
+                <tr>
+                    <td>데이터</td>
+                    <td>기존 데이터 그대로 유지</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 9. 문의 -->
+        <section id="contact">
+            <h2>9. 문의</h2>
+            <p>서비스 관련 문의사항이 있으시면 아래로 연락해 주세요.</p>
+
+            <div class="contact-box">
+                <h3>시공간 aitag 팀</h3>
+                <table>
+                    <tr>
+                        <th>구분</th>
+                        <th>연락처</th>
+                    </tr>
+                    <tr>
+                        <td>담당자</td>
+                        <td>시공간 대표 및 aitag PO 이수지</td>
+                    </tr>
+                    <tr>
+                        <td>이메일</td>
+                        <td><a href="mailto:contact@sigongan.com">contact@sigongan.com</a></td>
+                    </tr>
+                    <tr>
+                        <td>연락처</td>
+                        <td>010-2379-0533</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p style="text-align: center; margin-top: 32px;">더 나은 서비스를 제공하기 위해 최선을 다하겠습니다. 감사합니다.</p>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2025 Sigongan. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme management
+        function getSystemTheme() {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) return savedTheme;
+            return null; // null means use system preference
+        }
+
+        function setTheme(theme) {
+            if (theme === null) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            updateMermaidTheme();
+        }
+
+        function toggleTheme() {
+            const currentTheme = getCurrentTheme();
+            const systemTheme = getSystemTheme();
+            
+            if (currentTheme === null) {
+                // Currently using system preference, switch to opposite
+                setTheme(systemTheme === 'dark' ? 'light' : 'dark');
+            } else if (currentTheme === 'dark') {
+                setTheme('light');
+            } else {
+                setTheme('dark');
+            }
+        }
+
+        function getEffectiveTheme() {
+            const savedTheme = getCurrentTheme();
+            if (savedTheme) return savedTheme;
+            return getSystemTheme();
+        }
+
+        function updateMermaidTheme() {
+            const effectiveTheme = getEffectiveTheme();
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'neutral',
+                themeVariables: effectiveTheme === 'dark' ? {
+                    primaryColor: '#21262d',
+                    primaryTextColor: '#e6edf3',
+                    primaryBorderColor: '#30363d',
+                    lineColor: '#8b949e',
+                    secondaryColor: '#161b22',
+                    tertiaryColor: '#0d1117',
+                    background: '#161b22',
+                    mainBkg: '#21262d',
+                    nodeBorder: '#30363d',
+                    clusterBkg: '#161b22',
+                    clusterBorder: '#30363d'
+                } : {
+                    primaryColor: '#f6f8fa',
+                    primaryTextColor: '#1f2328',
+                    primaryBorderColor: '#d0d7de',
+                    lineColor: '#656d76',
+                    secondaryColor: '#ffffff',
+                    tertiaryColor: '#f6f8fa',
+                    background: '#ffffff',
+                    mainBkg: '#f6f8fa',
+                    nodeBorder: '#d0d7de',
+                    clusterBkg: '#f6f8fa',
+                    clusterBorder: '#d0d7de'
+                }
+            });
+            
+            // Re-render mermaid diagrams
+            document.querySelectorAll('.mermaid').forEach((el, index) => {
+                const code = el.getAttribute('data-mermaid-code') || el.textContent;
+                el.setAttribute('data-mermaid-code', code);
+                el.innerHTML = code;
+                el.removeAttribute('data-processed');
+            });
+            mermaid.run();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = getCurrentTheme();
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+            
+            // Store original mermaid code
+            document.querySelectorAll('.mermaid').forEach(el => {
+                el.setAttribute('data-mermaid-code', el.textContent);
+            });
+            
+            updateMermaidTheme();
+        });
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (getCurrentTheme() === null) {
+                updateMermaidTheme();
+            }
+        });
+    </script>
+</body>
+</html>
