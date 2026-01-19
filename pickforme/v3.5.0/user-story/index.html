@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>픽포미 유저 스토리</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --accent-secondary: #1a7f37;
+            --border: #d0d7de;
+            --warning: #9a6700;
+            --shadow: rgba(31, 35, 40, 0.12);
+            --sidebar-width: 280px;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-secondary: #238636;
+            --border: #30363d;
+            --warning: #d29922;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0d1117;
+                --bg-secondary: #161b22;
+                --bg-tertiary: #21262d;
+                --text-primary: #e6edf3;
+                --text-secondary: #8b949e;
+                --accent: #58a6ff;
+                --accent-secondary: #238636;
+                --border: #30363d;
+                --warning: #d29922;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Layout */
+        .layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 24px 0;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .sidebar-header .version {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-section { margin-bottom: 8px; }
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        .nav-section-title:hover { background: var(--bg-tertiary); }
+        .nav-section-title .arrow {
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+        .nav-section.collapsed .arrow { transform: rotate(-90deg); }
+        .nav-section.collapsed .nav-items { display: none; }
+        .nav-items { list-style: none; padding: 4px 0 4px 8px; }
+        .nav-item a {
+            display: block;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-item a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-item.active a {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 500;
+        }
+        .nav-link-single {
+            display: block;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .nav-link-single:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-link-single.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-width: 0;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+        .theme-toggle-icon { font-size: 1rem; font-weight: 600; line-height: 1; }
+        .theme-toggle-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+        .light-text, .dark-text { display: none; }
+        :root:not([data-theme]) .light-text, [data-theme="light"] .light-text { display: inline; }
+        [data-theme="dark"] .dark-text { display: inline; }
+        [data-theme="dark"] .light-text { display: none; }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) .light-text { display: none; }
+            :root:not([data-theme]) .dark-text { display: inline; }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-family: inherit;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        .menu-toggle:hover { background: var(--bg-tertiary); }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        /* Header */
+        .header { text-align: center; padding: 60px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 24px; }
+        .header .version { display: inline-block; background: var(--accent); color: #fff; padding: 8px 24px; border-radius: 24px; font-weight: 600; font-size: 1rem; }
+
+        /* TOC */
+        .toc { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 48px; }
+        .toc h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-secondary); border: none; padding: 0; }
+        .toc ul { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .toc a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Content */
+        section { margin-bottom: 64px; }
+        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); color: var(--text-primary); }
+        h3 { font-size: 1.25rem; font-weight: 600; margin: 32px 0 16px 0; color: var(--text-primary); }
+        h4 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 12px 0; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 0.95rem; }
+        th, td { padding: 12px 16px; text-align: left; border: 1px solid var(--border); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { background: var(--bg-secondary); color: var(--text-secondary); }
+        .info-box { background: var(--bg-secondary); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+        .info-box.warning { border-left-color: var(--warning); }
+        .info-box p { margin: 0; }
+        .highlight-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .highlight-box h4 { margin-top: 0; color: var(--accent); }
+        ul, ol { margin: 16px 0; padding-left: 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        footer { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .theme-toggle { right: 20px; }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.75rem; }
+            .toc ul { grid-template-columns: 1fr; }
+            .theme-toggle { padding: 6px 12px; }
+            .theme-toggle-label { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="메뉴 열기">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+    </button>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>PickForMe</h1>
+                <span class="version">v3.5.0</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>functional-spec</span>
+                        <span class="arrow">&#9662;</span>
+                    </div>
+                    <ul class="nav-items">
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/01-entry">01. 진입 단계</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/02-home">02. 홈</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/03-search">03. 검색</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/04-search-result">04. 검색 결과</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/05-product-detail">05. 상품 상세</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/06-chatbot">06. 챗봇</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/07-category">07. 카테고리</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/08-wishlist">08. 위시리스트</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/09-mypage">09. 마이페이지</a></li>
+                    </ul>
+                </div>
+                <a href="/pickforme/v3.5.0/user-story" class="nav-link-single active">user-story</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="테마 전환">
+                <span class="theme-toggle-icon"><span class="light-text">&#9675;</span><span class="dark-text">&#9679;</span></span>
+                <span class="theme-toggle-label">테마</span>
+            </button>
+
+            <div class="container">
+                <header class="header">
+                    <h1>픽포미 유저 스토리</h1>
+                    <p class="subtitle">시각장애인을 위한 쇼핑 도우미 앱</p>
+                    <span class="version">문서 버전: v1.3</span>
+                </header>
+
+                <nav class="toc">
+                    <h2>목차</h2>
+                    <ul>
+                        <li><a href="#free-trial">0. 무료 체험</a></li>
+                        <li><a href="#auth">1. 회원가입 / 로그인</a></li>
+                        <li><a href="#home">2. 홈화면</a></li>
+                        <li><a href="#product">3. 상품 상세 화면</a></li>
+                        <li><a href="#search">4. 검색창</a></li>
+                        <li><a href="#wishlist">5. 위시리스트</a></li>
+                        <li><a href="#chat">6. AI와 매니저에게 질문하기</a></li>
+                        <li><a href="#settings">8. 설정 및 접근성</a></li>
+                        <li><a href="#membership">9. 멤버십 / 구독</a></li>
+                        <li><a href="#summary">요약</a></li>
+                    </ul>
+                </nav>
+
+                <section id="free-trial">
+                    <h2>0. 무료 체험</h2>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>0-1</td><td>나는 가입 후 <strong>한 달간 무료로 모든 기능을 체험</strong>하고 싶다. 서비스가 내게 맞는지 충분히 확인하고 싶기 때문이다.</td></tr>
+                        <tr><td>0-2</td><td>나는 무료 체험 중 <strong>AI와 매니저 모두에게 무제한으로 질문</strong>하고 싶다. 두 가지 방식을 비교해보고 싶기 때문이다.</td></tr>
+                        <tr><td>0-3</td><td>나는 <strong>무료 체험 남은 기간을 쉽게 확인</strong>하고 싶다. 체험 종료 전에 멤버십 가입 여부를 결정하고 싶기 때문이다.</td></tr>
+                        <tr><td>0-4</td><td>나는 <strong>무료 체험 종료 전에 알림</strong>을 받고 싶다. 갑자기 서비스가 중단되는 것을 방지하고 싶기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="auth">
+                    <h2>1. 회원가입 / 로그인</h2>
+
+                    <h3>가입하기</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>1-1</td><td>나는 소셜로그인(애플, 구글, 카카오)으로 <strong>간단히 가입</strong>하고 싶다. 복잡한 절차 없이 빠르게 쇼핑을 시작하고 싶기 때문이다.</td></tr>
+                        <tr><td>1-2</td><td>나는 가입 과정에서 지금 <strong>무엇을 해야 하는지 음성으로 안내</strong>받고 싶다. 화면을 볼 수 없거나 버튼을 누르는 데 어려움이 있기 때문이다.</td></tr>
+                        <tr><td>1-3</td><td>나는 입력이 잘못되었을 때 <strong>어떤 부분이 문제인지 바로 알고 싶다</strong>. 같은 실수를 반복하지 않기 때문이다.</td></tr>
+                    </table>
+
+                    <h3>로그인하기</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>1-4</td><td>나는 최초 로그인 후 <strong>로그인 상태가 유지</strong>되길 원한다. 매번 로그인하는 것은 번거로운 절차를 반복해야 하고 싶지 않기 때문이다.</td></tr>
+                        <tr><td>1-5</td><td>나는 로그인 중 <strong>무슨 일이 하는지 음성으로 듣고 싶다</strong>. 화면을 볼 수 없거나 작은 글씨를 보는 데 어려움이 있기 때문이다.</td></tr>
+                        <tr><td>1-6</td><td>나는 비밀번호를 까먹었을 때 <strong>비밀번호 없이 다시 들어갈 수 있는 절차</strong>가 있기를 원한다. 비밀번호를 잊어도 계정을 다시 찾고 싶기 때문이다.</td></tr>
+                    </table>
+
+                    <h3>온보딩</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>1-7</td><td>나는 앱을 처음 사용할 때 <strong>VoiceOver 사용법을 안내</strong>받고 싶다. 앱 탐색 방법을 모르기 때문이다.</td></tr>
+                        <tr><td>1-8</td><td>나는 <strong>로그아웃</strong>하고 싶다. 다른 계정으로 전환하거나 기기를 공유할 때 필요하기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="home">
+                    <h2>2. 홈화면</h2>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>2-1</td><td>나는 <strong>앱을 열면 바로 상품 목록을 확인</strong>하고 싶다. 쇼핑을 바로 시작하고 싶기 때문이다.</td></tr>
+                        <tr><td>2-2</td><td>나는 픽포미 <strong>앱 안에서만 상품 목록을 탐색</strong>하고 싶다. 여러 쇼핑몰을 직접 이동하며 찾기 어렵기 때문이다.</td></tr>
+                        <tr><td>2-3</td><td>나는 상품을 선택하기 전에 <strong>상품명과 가격, 주 특징 정보</strong>를 한눈에 듣고 싶다. 여러 상품을 비교하고 탐색하기 편해야 하기 때문이다.</td></tr>
+                        <tr><td>2-4</td><td>나는 <strong>카테고리별로 상품이 정리</strong>되어 있기를 바란다. 원하는 물건을 빠르게 찾고 싶기 때문이다.</td></tr>
+                        <tr><td>2-5</td><td>나는 <strong>오늘의 특가 상품 목록</strong>을 홈화면에서 확인하고 싶다. 할인 중인 상품을 빨리 알고 구매 추천을 받고 싶기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="product">
+                    <h2>3. 상품 상세 화면</h2>
+
+                    <h3>이미지 설명</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>3-1</td><td>나는 상품 상세 화면에서 <strong>이미지가 무엇을 보여주는지 설명을 듣고 싶다</strong>. 이미지를 볼 수 없거나 구체적 시각정보를 인식하기 어렵기 때문이다.</td></tr>
+                        <tr><td>3-2</td><td>나는 이미지 설명이 단순한 색이나 형태가 아니라 <strong>상품 특징 중심으로 제공</strong>되길 바란다. 구매 판단에 필요하기 때문이다.</td></tr>
+                    </table>
+
+                    <h3>상세페이지 설명</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>3-3</td><td>나는 이미지로만 제공된 상품 상세 정보를 <strong>텍스트로 확인</strong>하고 싶다. 그렇지 않으면 정보에 접근할 수 없기 때문이다.</td></tr>
+                        <tr><td>3-4</td><td>나는 상품 정보가 <strong>항목별로 정리</strong>되어 제공되길 바란다. 긴 설명을 한 번에 이해하기 어렵기 때문이다.</td></tr>
+                        <tr><td>3-5</td><td>나는 용량, 원재료, 보관 방법 같은 <strong>특정 상품군 구매 판단에 필수적인 정보</strong>를 명확하게 알고 싶다. 구매 후 사용에 직접적인 영향을 주기 때문이다.</td></tr>
+                    </table>
+
+                    <h3>리뷰 요약</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>3-6</td><td>나는 많은 리뷰를 하나씩 보지 않고 <strong>요약된 리뷰를 확인</strong>하고 싶다. 모든 리뷰를 확인하기 어렵기 때문이다.</td></tr>
+                        <tr><td>3-7</td><td>나는 <strong>긍정 리뷰와 부정 리뷰가 나누어 제공</strong>되길 바란다. 장단점을 비교하고 싶기 때문이다.</td></tr>
+                        <tr><td>3-8</td><td>나는 <strong>실제 구매자들이 자주 언급한 내용을 중심으로</strong> 알고 싶다. 구매 판단에 가장 중요한 정보이기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="search">
+                    <h2>4. 검색창</h2>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>4-1</td><td>나는 검색창을 통해 원하는 상품을 <strong>직접 검색</strong>하고 싶다. 목록만으로는 찾기 어려울 때가 있기 때문이다.</td></tr>
+                        <tr><td>4-2</td><td>나는 <strong>음성으로 상품을 검색</strong>하고 싶다. 키보드 입력이 불편하기 때문이다.</td></tr>
+                        <tr><td>4-3</td><td>나는 <strong>최근 검색어를 다시 확인</strong>하고 싶다. 자주 찾는 상품이 있기 때문이다.</td></tr>
+                        <tr><td>4-4</td><td>나는 <strong>링크로 상품을 검색</strong>하고 싶다. 쿠팡에서 확인한 특정 상품을 그대로 픽포미에서 검색하고 싶기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="wishlist">
+                    <h2>5. 위시리스트</h2>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>5-1</td><td>나는 관심 있는 상품을 <strong>위시리스트에 저장</strong>하고 싶다. 나중에 다시 확인하고 싶기 때문이다.</td></tr>
+                        <tr><td>5-2</td><td>나는 위시리스트에 저장된 상품을 다시 선택해 <strong>상세 정보를 확인</strong>하고 싶다. 구매를 고민 중이기 때문이다.</td></tr>
+                        <tr><td>5-3</td><td>나는 위시리스트에서 상품을 <strong>삭제</strong>하고 싶다. 더 이상 관심 없는 상품을 정리하고 싶기 때문이다.</td></tr>
+                        <tr><td>5-4</td><td>나는 위시리스트에서 <strong>모든 상품을 한 번에 삭제</strong>하고 싶다. 여러 개를 하나씩 지우는 것이 번거롭기 때문이다.</td></tr>
+                        <tr><td>5-5</td><td>나는 실수로 찜 해제한 상품을 <strong>바로 복구</strong>할 수 있기를 바란다. 실수로 삭제하는 경우가 있기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="chat">
+                    <h2>6. AI와 매니저에게 질문하기</h2>
+
+                    <h3>AI에게 질문하기</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>6-1</td><td>나는 상품 상세 화면에서 바로 <strong>AI에게 질문</strong>하고 싶다. 다른 화면으로 이동하기 어렵기 때문이다.</td></tr>
+                        <tr><td>6-2</td><td>나는 상품과 관련된 질문을 <strong>자연스러운 문장으로</strong> 할 수 있기를 바란다. 검색어로 질문하기 어렵기 때문이다.</td></tr>
+                        <tr><td>6-3</td><td>나는 AI의 답변을 <strong>텍스트와 음성으로 확인</strong>하고 싶다. 음성 스크린리더를 통해서만 텍스트를 듣고 인식할 수 있거나, 상황에 따라 듣거나 읽고 싶기 때문이다.</td></tr>
+                        <tr><td>6-4</td><td>나는 <strong>챗봇 형태의 AI에게 질문</strong>을 하고 싶다. 대화형 질의응답을 통해 더 수월하게 원하는 정보를 얻을 수 있기 때문이다.</td></tr>
+                        <tr><td>6-5</td><td>나는 <strong>무료 체험이 종료되면 멤버십을 구독</strong>하고 싶다. AI나 매니저에게 계속 질문하고 싶기 때문이다.</td></tr>
+                    </table>
+
+                    <h3>매니저에게 질문하기</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>6-6</td><td>나는 AI로 해결되지 않는 질문을 <strong>매니저에게 직접 묻고 싶다</strong>. 더 정확한 설명이 필요하기 때문이다.</td></tr>
+                        <tr><td>6-7</td><td>나는 매니저 답변 <strong>대기 시간에 대한 안내</strong>가 있으면 좋겠다. 기다려야 하는 상황이기 때문이다.</td></tr>
+                        <tr><td>6-8</td><td>나는 <strong>매니저 패스를 구독</strong>해서 매니저에게 무제한 질문하고 싶다. 사람의 답변을 선호하기 때문이다.</td></tr>
+                        <tr><td>6-9</td><td>나는 매니저에게 <strong>카카오톡으로도 문의</strong>할 수 있으면 좋겠다. 익숙한 채널로 소통하고 싶기 때문이다.</td></tr>
+                    </table>
+
+                    <h3>채팅 히스토리</h3>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>6-10</td><td>나는 <strong>과거 채팅 내역을 확인</strong>하고 싶다. 이전에 질문했던 내용을 다시 보고 싶기 때문이다.</td></tr>
+                        <tr><td>6-11</td><td>나는 <strong>읽지 않은 답변이 있는 채팅방</strong>을 쉽게 찾고 싶다. 새로운 답변을 놓치고 싶지 않기 때문이다.</td></tr>
+                        <tr><td>6-12</td><td>나는 더 이상 필요 없는 <strong>채팅방을 삭제</strong>하고 싶다. 채팅 목록을 정리하고 싶기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="settings">
+                    <h2>8. 설정 및 접근성</h2>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>8-1</td><td>나는 <strong>화면 색상(밝은/어두운 모드)을 변경</strong>하고 싶다. 눈의 피로도에 따라 조절하고 싶기 때문이다.</td></tr>
+                        <tr><td>8-2</td><td>나는 <strong>글자 크기를 변경</strong>하고 싶다. 잔존 시력으로 글자를 읽기 위해 더 큰 글자가 필요하기 때문이다.</td></tr>
+                        <tr><td>8-3</td><td>나는 <strong>알림 설정을 변경</strong>하고 싶다. 원하는 알림만 받고 싶기 때문이다.</td></tr>
+                        <tr><td>8-4</td><td>나는 <strong>자주 묻는 질문(FAQ)을 확인</strong>하고 싶다. 직접 문의하기 전에 답을 찾고 싶기 때문이다.</td></tr>
+                        <tr><td>8-5</td><td>나는 <strong>사용 설명서를 확인</strong>하고 싶다. 앱 사용법을 다시 배우고 싶기 때문이다.</td></tr>
+                        <tr><td>8-6</td><td>나는 <strong>회원 탈퇴 시 사유를 선택</strong>할 수 있기를 바란다. 서비스 개선에 기여하고 싶기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="membership">
+                    <h2>9. 멤버십 / 구독</h2>
+
+                    <div class="info-box warning">
+                        <p><strong>접근성 정책:</strong> 시각장애인 사용자 보호를 위해 자동 결제 갱신을 사용하지 않습니다. 모든 구독 연장은 사용자가 직접 확인하고 결정합니다.</p>
+                    </div>
+
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>9-1</td><td>나는 <strong>내 구독 상태와 남은 기간을 확인</strong>하고 싶다. 언제 갱신해야 하는지 알고 싶기 때문이다.</td></tr>
+                        <tr><td>9-2</td><td>나는 <strong>무료 체험 남은 기간을 확인</strong>하고 싶다. 체험 종료 전에 멤버십 가입 여부를 결정하고 싶기 때문이다.</td></tr>
+                        <tr><td>9-3</td><td>나는 <strong>AI포미 패스(월 2,900원)를 구독</strong>해서 AI 질문을 무제한으로 사용하고 싶다. AI 답변으로 충분하기 때문이다.</td></tr>
+                        <tr><td>9-4</td><td>나는 <strong>매니저 패스(월 3,490원)를 구독</strong>해서 매니저에게 무제한 질문하고 싶다. 사람의 답변을 선호하기 때문이다.</td></tr>
+                        <tr><td>9-5</td><td>나는 <strong>올인원 패스(월 4,900원)를 구독</strong>해서 AI와 매니저 모두 무제한으로 질문하고 싶다. 둘 다 자주 사용하기 때문이다.</td></tr>
+                        <tr><td>9-6</td><td>나는 <strong>요금제를 비교</strong>하고 내게 맞는 것을 선택하고 싶다. 합리적인 선택을 하고 싶기 때문이다.</td></tr>
+                        <tr><td>9-7</td><td>나는 <strong>구독 만료 전에 연장 여부를 직접 선택</strong>할 수 있기를 바란다. 원치 않는 자동 결제를 방지하고 싶기 때문이다.</td></tr>
+                        <tr><td>9-8</td><td>나는 <strong>요금제를 변경</strong>하고 싶다. 사용 패턴이 바뀌었기 때문이다.</td></tr>
+                        <tr><td>9-9</td><td>나는 현재 요금제에서 <strong>업그레이드</strong> 안내를 받고 싶다. 더 많은 기능이 필요할 때 알고 싶기 때문이다.</td></tr>
+                        <tr><td>9-10</td><td>나는 <strong>멤버십 만료 전에 충분한 알림</strong>(7일, 3일, 당일)을 받고 싶다. 연장 여부를 미리 결정하고 싶기 때문이다.</td></tr>
+                    </table>
+                </section>
+
+                <section id="summary">
+                    <h2>요약: 픽포미 핵심 유저 스토리</h2>
+                    <table>
+                        <tr><th>번호</th><th>유저 스토리</th></tr>
+                        <tr><td>1</td><td>나는 <strong>이미지로만 제공된 상품 정보를 텍스트와 음성으로 이해</strong>하고 싶다.</td></tr>
+                        <tr><td>2</td><td>나는 <strong>긴 상품 상세페이지를 요약된 형태로</strong> 먼저 듣고 싶다.</td></tr>
+                        <tr><td>3</td><td>나는 <strong>상품 이미지가 무엇을 보여주는지 설명</strong>을 듣고 싶다.</td></tr>
+                        <tr><td>4</td><td>나는 <strong>상품 정보를 항목별로 요약 및 정리된 구조</strong>로 확인하고 싶다.</td></tr>
+                        <tr><td>5</td><td>나는 <strong>많은 리뷰를 하나씩 보지 않고 요약된 리뷰</strong>를 알고 싶다.</td></tr>
+                        <tr><td>6</td><td>나는 <strong>긍정 리뷰와 부정 리뷰를 구분</strong>해서 듣고 싶다.</td></tr>
+                        <tr><td>7</td><td>나는 <strong>상품을 보다가 생긴 궁금증을 바로 AI에게 질문</strong>하고 싶다.</td></tr>
+                        <tr><td>8</td><td>나는 <strong>AI로 해결되지 않는 질문을 매니저에게</strong> 묻고 싶다.</td></tr>
+                        <tr><td>9</td><td>나는 <strong>음성이나 링크로 원하는 상품을 직접 검색</strong>하고 싶다.</td></tr>
+                        <tr><td>10</td><td>나는 <strong>관심 있는 상품을 위시리스트에 저장</strong>하고 싶다.</td></tr>
+                        <tr><td>11</td><td>나는 <strong>내 사용 패턴에 맞는 요금제(AI포미/매니저/올인원 패스)를 선택</strong>하고 싶다.</td></tr>
+                        <tr><td>12</td><td>나는 <strong>과거 채팅 내역을 확인</strong>하고 싶다.</td></tr>
+                        <tr><td>13</td><td>나는 <strong>화면 색상과 글자 크기를 내 상황에 맞게 조절</strong>하고 싶다.</td></tr>
+                    </table>
+
+                    <h3>요금제별 핵심 유저 스토리</h3>
+
+                    <div class="highlight-box">
+                        <h4>AI포미 패스 (월 2,900원)</h4>
+                        <p>AI 응답으로 충분한 사용자 / AI 질문 무제한 / 매니저 상담 불가</p>
+                        <p><strong>대표 유저 스토리:</strong> 나는 AI포미 패스를 구독해서 <strong>AI에게 무제한으로 질문</strong>하고 싶다. 대부분의 궁금증은 AI가 해결해주기 때문이다.</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4>매니저 패스 (월 3,490원)</h4>
+                        <p>사람의 답변을 선호하는 사용자 / AI 질문 불가 / 매니저 상담 무제한</p>
+                        <p><strong>대표 유저 스토리:</strong> 나는 매니저 패스를 구독해서 <strong>매니저에게 무제한으로 질문</strong>하고 싶다. 복잡한 질문은 사람이 더 잘 이해하기 때문이다.</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4>올인원 패스 (월 4,900원)</h4>
+                        <p>AI와 매니저 모두 자주 사용하는 헤비 유저 / AI 질문 무제한 / 매니저 상담 무제한</p>
+                        <p><strong>대표 유저 스토리:</strong> 나는 올인원 패스를 구독해서 <strong>AI와 매니저 모두 무제한으로 이용</strong>하고 싶다. 상황에 따라 다른 방식으로 질문하고 싶기 때문이다.</p>
+                    </div>
+                </section>
+
+                <footer>
+                    <p>&copy; 2025 Sigongan. All rights reserved.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function getSystemTheme() { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+        function getCurrentTheme() { return localStorage.getItem('theme') || null; }
+        function setTheme(theme) {
+            if (theme === null) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+        }
+        function toggleTheme() {
+            const c = getCurrentTheme(), s = getSystemTheme();
+            if (c === null) setTheme(s === 'dark' ? 'light' : 'dark');
+            else if (c === 'dark') setTheme('light');
+            else setTheme('dark');
+        }
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('open');
+        }
+
+        function toggleSection(el) {
+            el.parentElement.classList.toggle('collapsed');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const t = getCurrentTheme();
+            if (t) document.documentElement.setAttribute('data-theme', t);
+        });
+    </script>
+</body>
+</html>

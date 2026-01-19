@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04. 검색 결과 - 픽포미 v3.5.0</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --border: #d0d7de;
+            --warning: #9a6700;
+            --shadow: rgba(31, 35, 40, 0.12);
+            --sidebar-width: 280px;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --warning: #d29922;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0d1117;
+                --bg-secondary: #161b22;
+                --bg-tertiary: #21262d;
+                --text-primary: #e6edf3;
+                --text-secondary: #8b949e;
+                --accent: #58a6ff;
+                --border: #30363d;
+                --warning: #d29922;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Layout */
+        .layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 24px 0;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .sidebar-header .version {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-section { margin-bottom: 8px; }
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        .nav-section-title:hover { background: var(--bg-tertiary); }
+        .nav-section-title .arrow {
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+        .nav-section.collapsed .arrow { transform: rotate(-90deg); }
+        .nav-section.collapsed .nav-items { display: none; }
+        .nav-items { list-style: none; padding: 4px 0 4px 8px; }
+        .nav-item a {
+            display: block;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-item a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-item.active a {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 500;
+        }
+        .nav-link-single {
+            display: block;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .nav-link-single:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-link-single.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-width: 0;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+        .theme-toggle-icon { font-size: 1rem; font-weight: 600; line-height: 1; }
+        .theme-toggle-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+        .light-text, .dark-text { display: none; }
+        :root:not([data-theme]) .light-text, [data-theme="light"] .light-text { display: inline; }
+        [data-theme="dark"] .dark-text { display: inline; }
+        [data-theme="dark"] .light-text { display: none; }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) .light-text { display: none; }
+            :root:not([data-theme]) .dark-text { display: inline; }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-family: inherit;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        .menu-toggle:hover { background: var(--bg-tertiary); }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        /* Header */
+        .header { text-align: center; padding: 60px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .header .meta { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* TOC */
+        .toc { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 48px; }
+        .toc h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-secondary); border: none; padding: 0; }
+        .toc ul { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .toc a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Content */
+        section { margin-bottom: 64px; }
+        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); color: var(--text-primary); }
+        h3 { font-size: 1.25rem; font-weight: 600; margin: 32px 0 16px 0; color: var(--text-primary); }
+        h4 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 12px 0; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 0.95rem; }
+        th, td { padding: 12px 16px; text-align: left; border: 1px solid var(--border); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { background: var(--bg-secondary); color: var(--text-secondary); }
+        .info-box { background: var(--bg-secondary); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+        .info-box.warning { border-left-color: var(--warning); }
+        .info-box p { margin: 0; }
+        ul, ol { margin: 16px 0; padding-left: 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        pre { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.9rem; color: var(--text-primary); font-family: 'SFMono-Regular', Consolas, monospace; white-space: pre-wrap; }
+        .mermaid { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; overflow-x: auto; }
+        footer { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .theme-toggle { right: 20px; }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.75rem; }
+            .toc ul { grid-template-columns: 1fr; }
+            .theme-toggle { padding: 6px 12px; }
+            .theme-toggle-label { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="메뉴 열기">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+    </button>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>PickForMe</h1>
+                <span class="version">v3.5.0</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>functional-spec</span>
+                        <span class="arrow">&#9662;</span>
+                    </div>
+                    <ul class="nav-items">
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/01-entry">01. 진입 단계</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/02-home">02. 홈</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/03-search">03. 검색</a></li>
+                        <li class="nav-item active"><a href="/pickforme/v3.5.0/functional-spec/04-search-result">04. 검색 결과</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/05-product-detail">05. 상품 상세</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/06-chatbot">06. 챗봇</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/07-category">07. 카테고리</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/08-wishlist">08. 위시리스트</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/09-mypage">09. 마이페이지</a></li>
+                    </ul>
+                </div>
+                <a href="/pickforme/v3.5.0/user-story" class="nav-link-single">user-story</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="테마 전환">
+                <span class="theme-toggle-icon"><span class="light-text">&#9675;</span><span class="dark-text">&#9679;</span></span>
+                <span class="theme-toggle-label">테마</span>
+            </button>
+
+            <div class="container">
+                <header class="header">
+                    <h1>04. 검색 결과</h1>
+                    <p class="subtitle">검색 키워드에 대한 상품 목록을 제공하는 화면</p>
+                    <p class="meta">최종 수정일: 2025-01-07</p>
+                </header>
+
+                <nav class="toc">
+                    <h2>목차</h2>
+                    <ul>
+                        <li><a href="#overview">개요</a></li>
+                        <li><a href="#entry">진입 조건</a></li>
+                        <li><a href="#header">상단 헤더</a></li>
+                        <li><a href="#sort">정렬 옵션</a></li>
+                        <li><a href="#grid">상품 그리드</a></li>
+                        <li><a href="#full">전체 결과 화면</a></li>
+                        <li><a href="#empty">검색 결과 없음</a></li>
+                        <li><a href="#accessibility">접근성 종합</a></li>
+                        <li><a href="#future">미리보는 상품 설명 (Future)</a></li>
+                    </ul>
+                </nav>
+
+                <section id="overview">
+                    <h2>개요</h2>
+                    <p>검색 키워드에 대한 상품 목록을 제공하는 화면.</p>
+                </section>
+
+                <section id="entry">
+                    <h2>진입 조건</h2>
+                    <table>
+                        <tr><th>조건</th><th>설명</th></tr>
+                        <tr><td>검색 실행</td><td>검색 화면에서 엔터 또는 추천어 터치</td></tr>
+                        <tr><td>키워드 터치</td><td>홈 인기 검색어 터치</td></tr>
+                    </table>
+                </section>
+
+                <section id="header">
+                    <h2>상단 헤더</h2>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>뒤로가기 (&lt;)</td><td>검색 화면 복귀</td></tr>
+                        <tr><td>검색어</td><td>현재 검색 키워드 표시 (터치 시 검색 화면)</td></tr>
+                        <tr><td>검색 (돋보기)</td><td>검색 화면으로 이동</td></tr>
+                    </table>
+
+                    <h3>검색 결과 개수 및 정렬</h3>
+                    <table>
+                        <tr><th>요소</th><th>위치</th><th>내용</th></tr>
+                        <tr><td>결과 개수</td><td>좌측</td><td>"검색결과 N개"</td></tr>
+                        <tr><td>정렬 (v)</td><td>우측</td><td>정렬 옵션 드롭다운</td></tr>
+                    </table>
+
+                    <h3>접근성</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>화면 진입 시</td><td>"검색 결과, 상품 N개가 검색되었습니다" 자동 안내</td></tr>
+                    </table>
+                </section>
+
+                <section id="sort">
+                    <h2>정렬 옵션</h2>
+                    <h3>UI</h3>
+                    <table>
+                        <tr><th>상태</th><th>표시</th></tr>
+                        <tr><td>기본</td><td>"추천순 v"</td></tr>
+                        <tr><td>선택 시</td><td>바텀 시트</td></tr>
+                    </table>
+
+                    <h3>바텀시트 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>타이틀</td><td>"필터"</td></tr>
+                        <tr><td>닫기 버튼</td><td>(x) 우측 상단</td></tr>
+                        <tr><td>옵션 목록</td><td>라디오 버튼 형태</td></tr>
+                        <tr><td>확인 버튼</td><td>[확인]</td></tr>
+                    </table>
+
+                    <h3>옵션</h3>
+                    <table>
+                        <tr><th>옵션</th><th>설명</th></tr>
+                        <tr><td>추천순</td><td>기본값, 선택 시 배경색 강조</td></tr>
+                        <tr><td>낮은 가격순</td><td>가격 오름차순</td></tr>
+                        <tr><td>높은 가격순</td><td>가격 내림차순</td></tr>
+                    </table>
+
+                    <h3>동작</h3>
+                    <table>
+                        <tr><th>액션</th><th>결과</th></tr>
+                        <tr><td>정렬 버튼 터치</td><td>바텀시트 표시</td></tr>
+                        <tr><td>옵션 선택</td><td>해당 옵션 선택 상태 변경</td></tr>
+                        <tr><td>[확인] 터치</td><td>바텀시트 닫힘 + 목록 새로고침</td></tr>
+                    </table>
+
+                    <h3>접근성</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>버튼</td><td>"정렬 기준 선택, 현재 추천순. 이중 탭 하여 변경"</td></tr>
+                        <tr><td>옵션</td><td>"낮은 가격순, 라디오 버튼, 선택 안 됨"</td></tr>
+                    </table>
+                </section>
+
+                <section id="grid">
+                    <h2>상품 그리드</h2>
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>레이아웃</td><td>2열 그리드</td></tr>
+                        <tr><td>노출 개수</td><td>상위 4~6개</td></tr>
+                        <tr><td>더보기</td><td>[검색결과 모두보기] 버튼</td></tr>
+                    </table>
+
+                    <h3>상품 카드 (그리드형)</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>썸네일</td><td>정사각형 이미지</td></tr>
+                        <tr><td>상품명</td><td>최대 2줄, 말줄임</td></tr>
+                        <tr><td>가격</td><td>판매가</td></tr>
+                    </table>
+
+                    <h3>동작</h3>
+                    <table>
+                        <tr><th>액션</th><th>결과</th></tr>
+                        <tr><td>상품 카드 터치</td><td>상품 상세 이동</td></tr>
+                        <tr><td>[검색결과 모두보기] 터치</td><td>전체 결과 화면 이동 (무한 스크롤)</td></tr>
+                    </table>
+                </section>
+
+                <section id="full">
+                    <h2>전체 결과 화면 (하위)</h2>
+                    <h3>진입</h3>
+                    <p>[검색결과 모두보기] 버튼 터치</p>
+
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>헤더</td><td>뒤로가기 + "검색결과"</td></tr>
+                        <tr><td>결과 정보</td><td>"상품 N개" + 정렬 드롭다운</td></tr>
+                        <tr><td>상품 목록</td><td>2열 그리드, 무한 스크롤</td></tr>
+                        <tr><td>로딩</td><td>하단 스피너</td></tr>
+                    </table>
+
+                    <h3>페이지네이션</h3>
+                    <table>
+                        <tr><th>항목</th><th>내용</th></tr>
+                        <tr><td>트리거</td><td>스크롤 하단 도달</td></tr>
+                        <tr><td>로딩</td><td>스피너 표시</td></tr>
+                        <tr><td>완료</td><td>추가 상품 렌더링</td></tr>
+                        <tr><td>마지막</td><td>"마지막 상품입니다" 안내</td></tr>
+                    </table>
+                </section>
+
+                <section id="empty">
+                    <h2>검색 결과 없음</h2>
+                    <h3>조건</h3>
+                    <p>검색 결과 0건</p>
+
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>아이콘</td><td>검색 관련 일러스트</td></tr>
+                        <tr><td>메시지</td><td>"검색 결과가 없습니다"</td></tr>
+                        <tr><td>서브 메시지</td><td>"다른 검색어로 다시 시도해보세요"</td></tr>
+                        <tr><td>버튼</td><td>[홈으로 가기]</td></tr>
+                    </table>
+
+                    <h3>접근성</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>진입 시</td><td>"검색 결과가 없습니다" 자동 안내</td></tr>
+                    </table>
+                </section>
+
+                <section id="accessibility">
+                    <h2>접근성 종합</h2>
+                    <h3>화면 진입 시 안내</h3>
+                    <p>"검색 결과, 상품 N개가 검색되었습니다"</p>
+
+                    <h3>포커스 순서</h3>
+                    <p>뒤로가기 → 검색어 → 검색 → 결과 개수 → 정렬 → 상품 카드들 → 모두 보기</p>
+                </section>
+
+                <section id="future">
+                    <h2>미리보는 상품 설명 (Future Release)</h2>
+                    <div class="info-box warning">
+                        <p><strong>v3.5.0 범위 미포함</strong> - 추후 버전에서 구현 예정</p>
+                    </div>
+
+                    <h3>목적</h3>
+                    <p>상품 상세 진입 없이 AI 요약으로 빠른 비교</p>
+
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>섹션 타이틀</td><td>"미리보는 상품 설명" (Heading)</td></tr>
+                        <tr><td>AI 요약 카드</td><td>세로 리스트</td></tr>
+                    </table>
+
+                    <h3>AI 요약 카드</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>썸네일</td><td>좌측 정사각형</td></tr>
+                        <tr><td>상품명</td><td>우측 상단</td></tr>
+                        <tr><td>가격</td><td>상품명 하단</td></tr>
+                        <tr><td>AI 요약</td><td>3~4줄 핵심 요약문</td></tr>
+                        <tr><td>이동 버튼</td><td>(→) 우측 하단</td></tr>
+                    </table>
+                </section>
+
+                <footer>
+                    <p>&copy; 2025 Sigongan. All rights reserved.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+
+        function getSystemTheme() { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+        function getCurrentTheme() { return localStorage.getItem('theme') || null; }
+        function setTheme(theme) {
+            if (theme === null) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+        }
+        function toggleTheme() {
+            const c = getCurrentTheme(), s = getSystemTheme();
+            if (c === null) setTheme(s === 'dark' ? 'light' : 'dark');
+            else if (c === 'dark') setTheme('light');
+            else setTheme('dark');
+        }
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('open');
+        }
+
+        function toggleSection(el) {
+            el.parentElement.classList.toggle('collapsed');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const t = getCurrentTheme();
+            if (t) document.documentElement.setAttribute('data-theme', t);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>07. 카테고리 - 픽포미 v3.5.0</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --border: #d0d7de;
+            --warning: #9a6700;
+            --shadow: rgba(31, 35, 40, 0.12);
+            --sidebar-width: 280px;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --warning: #d29922;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0d1117;
+                --bg-secondary: #161b22;
+                --bg-tertiary: #21262d;
+                --text-primary: #e6edf3;
+                --text-secondary: #8b949e;
+                --accent: #58a6ff;
+                --border: #30363d;
+                --warning: #d29922;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; background-color: var(--bg-primary); color: var(--text-primary); line-height: 1.7; transition: background-color 0.3s ease, color 0.3s ease; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: var(--sidebar-width); background: var(--bg-secondary); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; padding: 24px 0; transition: transform 0.3s ease; z-index: 100; }
+        .sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+        .sidebar-header h1 { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .sidebar-header .version { font-size: 0.85rem; color: var(--text-secondary); }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-section { margin-bottom: 8px; }
+        .nav-section-title { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: background-color 0.2s; }
+        .nav-section-title:hover { background: var(--bg-tertiary); }
+        .nav-section-title .arrow { font-size: 0.75rem; transition: transform 0.2s; }
+        .nav-section.collapsed .arrow { transform: rotate(-90deg); }
+        .nav-section.collapsed .nav-items { display: none; }
+        .nav-items { list-style: none; padding: 4px 0 4px 8px; }
+        .nav-item a { display: block; padding: 8px 12px; font-size: 0.875rem; color: var(--text-secondary); text-decoration: none; border-radius: 6px; transition: all 0.2s; }
+        .nav-item a:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-item.active a { background: var(--accent); color: #fff; font-weight: 500; }
+        .nav-link-single { display: block; padding: 10px 12px; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); text-decoration: none; border-radius: 6px; transition: all 0.2s; margin-bottom: 8px; }
+        .nav-link-single:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-link-single.active { background: var(--accent); color: #fff; }
+        .main-content { flex: 1; margin-left: var(--sidebar-width); min-width: 0; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+        .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 50px; padding: 8px 16px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px var(--shadow); color: var(--text-primary); font-family: inherit; }
+        .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+        .theme-toggle-icon { font-size: 1rem; font-weight: 600; line-height: 1; }
+        .theme-toggle-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+        .light-text, .dark-text { display: none; }
+        :root:not([data-theme]) .light-text, [data-theme="light"] .light-text { display: inline; }
+        [data-theme="dark"] .dark-text { display: inline; }
+        [data-theme="dark"] .light-text { display: none; }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme]) .light-text { display: none; } :root:not([data-theme]) .dark-text { display: inline; } }
+        .menu-toggle { display: none; position: fixed; top: 20px; left: 20px; z-index: 1001; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; cursor: pointer; color: var(--text-primary); font-family: inherit; box-shadow: 0 2px 8px var(--shadow); }
+        .menu-toggle:hover { background: var(--bg-tertiary); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 99; }
+        .header { text-align: center; padding: 60px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .header .meta { font-size: 0.9rem; color: var(--text-secondary); }
+        .toc { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 48px; }
+        .toc h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-secondary); border: none; padding: 0; }
+        .toc ul { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .toc a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+        .toc a:hover { text-decoration: underline; }
+        section { margin-bottom: 64px; }
+        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); color: var(--text-primary); }
+        h3 { font-size: 1.25rem; font-weight: 600; margin: 32px 0 16px 0; color: var(--text-primary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 0.95rem; }
+        th, td { padding: 12px 16px; text-align: left; border: 1px solid var(--border); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { background: var(--bg-secondary); color: var(--text-secondary); }
+        ul, ol { margin: 16px 0; padding-left: 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        footer { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem; }
+        @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } .sidebar-overlay.open { display: block; } .main-content { margin-left: 0; } .menu-toggle { display: block; } }
+        @media (max-width: 768px) { .header h1 { font-size: 1.75rem; } .toc ul { grid-template-columns: 1fr; } .theme-toggle { padding: 6px 12px; } .theme-toggle-label { display: none; } }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="메뉴 열기">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>
+    </button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>PickForMe</h1>
+                <span class="version">v3.5.0</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>functional-spec</span>
+                        <span class="arrow">&#9662;</span>
+                    </div>
+                    <ul class="nav-items">
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/01-entry">01. 진입 단계</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/02-home">02. 홈</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/03-search">03. 검색</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/04-search-result">04. 검색 결과</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/05-product-detail">05. 상품 상세</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/06-chatbot">06. 챗봇</a></li>
+                        <li class="nav-item active"><a href="/pickforme/v3.5.0/functional-spec/07-category">07. 카테고리</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/08-wishlist">08. 위시리스트</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/09-mypage">09. 마이페이지</a></li>
+                    </ul>
+                </div>
+                <a href="/pickforme/v3.5.0/user-story" class="nav-link-single">user-story</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="테마 전환">
+                <span class="theme-toggle-icon"><span class="light-text">&#9675;</span><span class="dark-text">&#9679;</span></span>
+                <span class="theme-toggle-label">테마</span>
+            </button>
+            <div class="container">
+                <header class="header">
+                    <h1>07. 카테고리</h1>
+                    <p class="subtitle">상품을 카테고리별로 탐색할 수 있는 화면</p>
+                    <p class="meta">최종 수정일: 2025-01-07</p>
+                </header>
+                <nav class="toc">
+                    <h2>목차</h2>
+                    <ul>
+                        <li><a href="#overview">개요</a></li>
+                        <li><a href="#entry">진입 조건</a></li>
+                        <li><a href="#main">카테고리 메인</a></li>
+                        <li><a href="#list">카테고리별 상품 목록</a></li>
+                        <li><a href="#accessibility">접근성</a></li>
+                    </ul>
+                </nav>
+                <section id="overview">
+                    <h2>개요</h2>
+                    <p>상품을 카테고리별로 탐색할 수 있는 화면.</p>
+                </section>
+                <section id="entry">
+                    <h2>진입 조건</h2>
+                    <table>
+                        <tr><th>조건</th><th>설명</th></tr>
+                        <tr><td>탭 바</td><td>하단 카테고리 탭 터치</td></tr>
+                    </table>
+                </section>
+                <section id="main">
+                    <h2>카테고리 메인</h2>
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>헤더</td><td>"카테고리"</td></tr>
+                        <tr><td>카테고리 그리드</td><td>5열 그리드</td></tr>
+                        <tr><td>각 아이템</td><td>아이콘 + 카테고리명</td></tr>
+                    </table>
+                    <h3>카테고리 목록 (15개)</h3>
+                    <table>
+                        <tr><th>순서</th><th>카테고리</th></tr>
+                        <tr><td>1</td><td>식품</td></tr>
+                        <tr><td>2</td><td>생활용품</td></tr>
+                        <tr><td>3</td><td>주방용품</td></tr>
+                        <tr><td>4</td><td>욕실용품</td></tr>
+                        <tr><td>5</td><td>반려동물</td></tr>
+                        <tr><td>6</td><td>의류</td></tr>
+                        <tr><td>7</td><td>잡화</td></tr>
+                        <tr><td>8</td><td>언더웨어</td></tr>
+                        <tr><td>9</td><td>화장품</td></tr>
+                        <tr><td>10</td><td>건강</td></tr>
+                        <tr><td>11</td><td>가전</td></tr>
+                        <tr><td>12</td><td>디지털</td></tr>
+                        <tr><td>13</td><td>문구</td></tr>
+                        <tr><td>14</td><td>완구</td></tr>
+                        <tr><td>15</td><td>기타</td></tr>
+                    </table>
+                    <h3>동작</h3>
+                    <table>
+                        <tr><th>액션</th><th>결과</th></tr>
+                        <tr><td>카테고리 터치</td><td>해당 카테고리 상품 목록 이동</td></tr>
+                    </table>
+                </section>
+                <section id="list">
+                    <h2>카테고리별 상품 목록 (하위 화면)</h2>
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>헤더</td><td>뒤로가기 + 카테고리명</td></tr>
+                        <tr><td>상품 개수</td><td>"상품 N개"</td></tr>
+                        <tr><td>정렬 드롭다운</td><td>추천순/낮은 가격순/높은 가격순</td></tr>
+                        <tr><td>상품 그리드</td><td>2열 그리드</td></tr>
+                    </table>
+                    <h3>상품 카드</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>썸네일</td><td>정사각형 이미지</td></tr>
+                        <tr><td>상품명</td><td>최대 2줄</td></tr>
+                        <tr><td>가격</td><td>판매가</td></tr>
+                    </table>
+                    <h3>페이지네이션</h3>
+                    <table>
+                        <tr><th>항목</th><th>내용</th></tr>
+                        <tr><td>방식</td><td>무한 스크롤</td></tr>
+                        <tr><td>로딩</td><td>하단 스피너</td></tr>
+                        <tr><td>마지막</td><td>"마지막 상품입니다" 안내</td></tr>
+                    </table>
+                    <h3>동작</h3>
+                    <table>
+                        <tr><th>액션</th><th>결과</th></tr>
+                        <tr><td>상품 카드 터치</td><td>상품 상세 이동</td></tr>
+                        <tr><td>뒤로가기</td><td>카테고리 메인 복귀</td></tr>
+                        <tr><td>정렬 변경</td><td>목록 새로고침</td></tr>
+                    </table>
+                </section>
+                <section id="accessibility">
+                    <h2>접근성</h2>
+                    <h3>카테고리 메인</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>화면 진입</td><td>"카테고리 화면, 15개 카테고리"</td></tr>
+                        <tr><td>카테고리 아이템</td><td>"식품, 버튼. 이중 탭 하여 식품 상품 보기"</td></tr>
+                    </table>
+                    <h3>카테고리 상품 목록</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>화면 진입</td><td>"식품 카테고리, 상품 N개"</td></tr>
+                        <tr><td>상품 카드</td><td>"상품명, N원. 이중 탭 하여 상세 보기"</td></tr>
+                    </table>
+                    <h3>포커스 순서</h3>
+                    <p>뒤로가기 → 헤더 → 상품개수 → 정렬 → 상품카드들</p>
+                </section>
+                <footer>
+                    <p>&copy; 2025 Sigongan. All rights reserved.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+        function getSystemTheme() { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+        function getCurrentTheme() { return localStorage.getItem('theme') || null; }
+        function setTheme(theme) { if (theme === null) { document.documentElement.removeAttribute('data-theme'); localStorage.removeItem('theme'); } else { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('theme', theme); } }
+        function toggleTheme() { const c = getCurrentTheme(), s = getSystemTheme(); if (c === null) setTheme(s === 'dark' ? 'light' : 'dark'); else if (c === 'dark') setTheme('light'); else setTheme('dark'); }
+        function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('open'); }
+        function toggleSection(el) { el.parentElement.classList.toggle('collapsed'); }
+        document.addEventListener('DOMContentLoaded', () => { const t = getCurrentTheme(); if (t) document.documentElement.setAttribute('data-theme', t); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>09. 마이페이지 - 픽포미 v3.5.0</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --border: #d0d7de;
+            --warning: #9a6700;
+            --shadow: rgba(31, 35, 40, 0.12);
+            --sidebar-width: 280px;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --warning: #d29922;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0d1117;
+                --bg-secondary: #161b22;
+                --bg-tertiary: #21262d;
+                --text-primary: #e6edf3;
+                --text-secondary: #8b949e;
+                --accent: #58a6ff;
+                --border: #30363d;
+                --warning: #d29922;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Layout */
+        .layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 24px 0;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .sidebar-header .version {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-section { margin-bottom: 8px; }
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        .nav-section-title:hover { background: var(--bg-tertiary); }
+        .nav-section-title .arrow {
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+        .nav-section.collapsed .arrow { transform: rotate(-90deg); }
+        .nav-section.collapsed .nav-items { display: none; }
+        .nav-items { list-style: none; padding: 4px 0 4px 8px; }
+        .nav-item a {
+            display: block;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-item a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-item.active a {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 500;
+        }
+        .nav-link-single {
+            display: block;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .nav-link-single:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .nav-link-single.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-width: 0;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--shadow);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+        .theme-toggle-icon { font-size: 1rem; font-weight: 600; line-height: 1; }
+        .theme-toggle-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+        .light-text, .dark-text { display: none; }
+        :root:not([data-theme]) .light-text, [data-theme="light"] .light-text { display: inline; }
+        [data-theme="dark"] .dark-text { display: inline; }
+        [data-theme="dark"] .light-text { display: none; }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) .light-text { display: none; }
+            :root:not([data-theme]) .dark-text { display: inline; }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-family: inherit;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        .menu-toggle:hover { background: var(--bg-tertiary); }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        /* Header */
+        .header { text-align: center; padding: 60px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .header .meta { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* TOC */
+        .toc { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 48px; }
+        .toc h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-secondary); border: none; padding: 0; }
+        .toc ul { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .toc a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Content */
+        section { margin-bottom: 64px; }
+        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); color: var(--text-primary); }
+        h3 { font-size: 1.25rem; font-weight: 600; margin: 32px 0 16px 0; color: var(--text-primary); }
+        h4 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 12px 0; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 0.95rem; }
+        th, td { padding: 12px 16px; text-align: left; border: 1px solid var(--border); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+        td { background: var(--bg-secondary); color: var(--text-secondary); }
+        .info-box { background: var(--bg-secondary); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+        .info-box.warning { border-left-color: var(--warning); }
+        .info-box p { margin: 0; }
+        ul, ol { margin: 16px 0; padding-left: 24px; }
+        li { margin-bottom: 8px; color: var(--text-secondary); }
+        pre { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.9rem; color: var(--text-primary); font-family: 'SFMono-Regular', Consolas, monospace; white-space: pre-wrap; }
+        .mermaid { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; overflow-x: auto; }
+        footer { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .theme-toggle { right: 20px; }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.75rem; }
+            .toc ul { grid-template-columns: 1fr; }
+            .theme-toggle { padding: 6px 12px; }
+            .theme-toggle-label { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="메뉴 열기">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"></path>
+        </svg>
+    </button>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>PickForMe</h1>
+                <span class="version">v3.5.0</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title" onclick="toggleSection(this)">
+                        <span>functional-spec</span>
+                        <span class="arrow">&#9662;</span>
+                    </div>
+                    <ul class="nav-items">
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/01-entry">01. 진입 단계</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/02-home">02. 홈</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/03-search">03. 검색</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/04-search-result">04. 검색 결과</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/05-product-detail">05. 상품 상세</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/06-chatbot">06. 챗봇</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/07-category">07. 카테고리</a></li>
+                        <li class="nav-item"><a href="/pickforme/v3.5.0/functional-spec/08-wishlist">08. 위시리스트</a></li>
+                        <li class="nav-item active"><a href="/pickforme/v3.5.0/functional-spec/09-mypage">09. 마이페이지</a></li>
+                    </ul>
+                </div>
+                <a href="/pickforme/v3.5.0/user-story" class="nav-link-single">user-story</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="테마 전환">
+                <span class="theme-toggle-icon"><span class="light-text">&#9675;</span><span class="dark-text">&#9679;</span></span>
+                <span class="theme-toggle-label">테마</span>
+            </button>
+
+            <div class="container">
+                <header class="header">
+                    <h1>09. 마이페이지</h1>
+                    <p class="subtitle">사용자 정보 및 앱 설정을 관리하는 화면</p>
+                    <p class="meta">최종 수정일: 2025-01-08 | 픽포미 v3.5.0 기능명세서</p>
+                </header>
+
+                <nav class="toc">
+                    <h2>목차</h2>
+                    <ul>
+                        <li><a href="#overview">개요</a></li>
+                        <li><a href="#entry">진입 조건</a></li>
+                        <li><a href="#profile">프로필 영역</a></li>
+                        <li><a href="#membership">멤버십 영역</a></li>
+                        <li><a href="#menu">메뉴 목록</a></li>
+                        <li><a href="#settings">설정 화면</a></li>
+                        <li><a href="#withdrawal">회원 탈퇴</a></li>
+                        <li><a href="#accessibility">접근성</a></li>
+                    </ul>
+                </nav>
+
+                <section id="overview">
+                    <h2>개요</h2>
+                    <p>사용자 정보 및 앱 설정을 관리하는 화면.</p>
+                </section>
+
+                <section id="entry">
+                    <h2>진입 조건</h2>
+                    <table>
+                        <tr><th>조건</th><th>설명</th></tr>
+                        <tr><td>탭 바</td><td>하단 마이페이지 탭 터치</td></tr>
+                    </table>
+                </section>
+
+                <section id="profile">
+                    <h2>프로필 영역</h2>
+                    <h3>UI 구성</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>닉네임</td><td>사용자 닉네임</td></tr>
+                        <tr><td>이메일</td><td>가입 이메일</td></tr>
+                        <tr><td>버튼</td><td>[프로필 수정] 우측</td></tr>
+                    </table>
+
+                    <h3>프로필 수정 화면</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th><th>수정 가능</th></tr>
+                        <tr><td>닉네임</td><td>텍스트 입력</td><td>O</td></tr>
+                        <tr><td>이메일</td><td>표시만</td><td>X</td></tr>
+                        <tr><td>전화번호</td><td>표시만</td><td>X</td></tr>
+                        <tr><td>생년월일</td><td>바텀시트 선택</td><td>O</td></tr>
+                        <tr><td>성별</td><td>바텀시트 선택</td><td>O</td></tr>
+                    </table>
+
+                    <h3>동작</h3>
+                    <table>
+                        <tr><th>액션</th><th>결과</th></tr>
+                        <tr><td>[저장]</td><td>변경사항 저장 + 토스트: "저장되었습니다"</td></tr>
+                        <tr><td>뒤로가기</td><td>변경 시 확인 팝업</td></tr>
+                    </table>
+                </section>
+
+                <section id="membership">
+                    <h2>멤버십 영역</h2>
+                    <h3>상태별 표시</h3>
+                    <table>
+                        <tr><th>상태</th><th>표시 내용</th></tr>
+                        <tr><td>무료 체험 중</td><td>"무료 체험 중 (N일 남음)"</td></tr>
+                        <tr><td>무료 체험 종료</td><td>"무료 체험 종료"</td></tr>
+                        <tr><td>AI포미 패스</td><td>"AI포미 패스 이용 중"</td></tr>
+                        <tr><td>매니저 패스</td><td>"매니저 패스 이용 중"</td></tr>
+                        <tr><td>올인원 패스</td><td>"올인원 패스 이용 중"</td></tr>
+                    </table>
+
+                    <h3>멤버십 관리 화면</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>현재 멤버십</td><td>현재 구독 상품</td></tr>
+                        <tr><td>만료일</td><td>구독 만료 날짜</td></tr>
+                        <tr><td>요금제 목록</td><td>AI포미/매니저/올인원 패스</td></tr>
+                        <tr><td>가격</td><td>각 요금제 월 가격</td></tr>
+                    </table>
+
+                    <h3>요금제 정보</h3>
+                    <table>
+                        <tr><th>요금제</th><th>가격</th><th>포함 기능</th></tr>
+                        <tr><td>AI포미 패스</td><td>월 2,900원</td><td>AI 질문 무제한</td></tr>
+                        <tr><td>매니저 패스</td><td>월 3,490원</td><td>매니저 질문 무제한</td></tr>
+                        <tr><td>올인원 패스</td><td>월 4,900원</td><td>AI + 매니저 모두 무제한</td></tr>
+                    </table>
+
+                    <div class="info-box warning">
+                        <p><strong>결제 정책:</strong> 자동 갱신 없음. 만료 전 사용자가 직접 갱신 선택.</p>
+                    </div>
+                </section>
+
+                <section id="menu">
+                    <h2>메뉴 목록</h2>
+                    <h3>구성</h3>
+                    <table>
+                        <tr><th>순서</th><th>메뉴</th><th>이동 화면</th></tr>
+                        <tr><td>1</td><td>채팅 히스토리</td><td>채팅 목록 화면</td></tr>
+                        <tr><td>2</td><td>설정</td><td>설정 화면</td></tr>
+                        <tr><td>3</td><td>고객센터</td><td>고객센터 화면</td></tr>
+                        <tr><td>4</td><td>로그아웃</td><td>로그아웃 확인 팝업</td></tr>
+                    </table>
+
+                    <h3>채팅 히스토리</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>채팅방 목록</td><td>상품별 대화 목록</td></tr>
+                        <tr><td>정렬</td><td>최근 메시지 순</td></tr>
+                        <tr><td>미읽음 표시</td><td>새 답변 있는 채팅방 뱃지</td></tr>
+                    </table>
+
+                    <h3>고객센터</h3>
+                    <table>
+                        <tr><th>메뉴</th><th>내용</th></tr>
+                        <tr><td>자주 묻는 질문</td><td>FAQ 목록</td></tr>
+                        <tr><td>1:1 문의</td><td>카카오톡 채널 이동</td></tr>
+                        <tr><td>사용 설명서</td><td>앱 가이드</td></tr>
+                        <tr><td>공지사항</td><td>서비스 공지</td></tr>
+                    </table>
+
+                    <h3>로그아웃</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>팝업 타이틀</td><td>"로그아웃 하시겠어요?"</td></tr>
+                        <tr><td>버튼 1</td><td>[로그아웃] → 로그인 화면 이동</td></tr>
+                        <tr><td>버튼 2</td><td>[취소] → 팝업 닫힘</td></tr>
+                    </table>
+                </section>
+
+                <section id="settings">
+                    <h2>설정 화면</h2>
+                    <h3>메뉴 구성</h3>
+                    <table>
+                        <tr><th>메뉴</th><th>타입</th><th>설명</th></tr>
+                        <tr><td>알림 설정</td><td>토글</td><td>푸시 알림 ON/OFF</td></tr>
+                        <tr><td>화면 모드</td><td>선택</td><td>라이트/다크/시스템</td></tr>
+                        <tr><td>글자 크기</td><td>슬라이더</td><td>작게/보통/크게/아주 크게</td></tr>
+                        <tr><td>앱 버전</td><td>표시</td><td>현재 버전 정보</td></tr>
+                    </table>
+
+                    <h3>알림 설정 상세</h3>
+                    <table>
+                        <tr><th>항목</th><th>설명</th></tr>
+                        <tr><td>매니저 답변 알림</td><td>매니저 답변 도착 시</td></tr>
+                        <tr><td>멤버십 알림</td><td>만료 7일/3일/당일 전</td></tr>
+                        <tr><td>마케팅 알림</td><td>이벤트/프로모션 안내</td></tr>
+                    </table>
+
+                    <h3>화면 모드</h3>
+                    <table>
+                        <tr><th>옵션</th><th>설명</th></tr>
+                        <tr><td>라이트 모드</td><td>항상 밝은 화면</td></tr>
+                        <tr><td>다크 모드</td><td>항상 어두운 화면</td></tr>
+                        <tr><td>시스템 설정</td><td>기기 설정 따름 (기본값)</td></tr>
+                    </table>
+
+                    <h3>글자 크기</h3>
+                    <table>
+                        <tr><th>옵션</th><th>배율</th></tr>
+                        <tr><td>작게</td><td>90%</td></tr>
+                        <tr><td>보통</td><td>100% (기본)</td></tr>
+                        <tr><td>크게</td><td>120%</td></tr>
+                        <tr><td>아주 크게</td><td>150%</td></tr>
+                    </table>
+                </section>
+
+                <section id="withdrawal">
+                    <h2>회원 탈퇴</h2>
+                    <h3>진입</h3>
+                    <p>설정 → 하단 "회원 탈퇴" 링크</p>
+
+                    <h3>탈퇴 절차</h3>
+                    <table>
+                        <tr><th>단계</th><th>내용</th></tr>
+                        <tr><td>1</td><td>탈퇴 안내 화면</td></tr>
+                        <tr><td>2</td><td>탈퇴 사유 선택</td></tr>
+                        <tr><td>3</td><td>최종 확인 팝업</td></tr>
+                        <tr><td>4</td><td>탈퇴 완료</td></tr>
+                    </table>
+
+                    <h3>탈퇴 안내 화면</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>타이틀</td><td>"정말 탈퇴하시겠어요?"</td></tr>
+                        <tr><td>안내 1</td><td>모든 데이터 삭제됨</td></tr>
+                        <tr><td>안내 2</td><td>남은 멤버십 기간 환불 불가</td></tr>
+                        <tr><td>안내 3</td><td>동일 계정 재가입 불가 (30일)</td></tr>
+                        <tr><td>버튼</td><td>[계속하기]</td></tr>
+                    </table>
+
+                    <h3>탈퇴 사유 선택</h3>
+                    <table>
+                        <tr><th>옵션</th></tr>
+                        <tr><td>서비스 이용이 불편해요</td></tr>
+                        <tr><td>원하는 상품이 없어요</td></tr>
+                        <tr><td>다른 서비스를 이용할 거예요</td></tr>
+                        <tr><td>개인정보가 걱정돼요</td></tr>
+                        <tr><td>기타</td></tr>
+                    </table>
+
+                    <h3>최종 확인 팝업</h3>
+                    <table>
+                        <tr><th>요소</th><th>내용</th></tr>
+                        <tr><td>타이틀</td><td>"탈퇴하시겠어요?"</td></tr>
+                        <tr><td>설명</td><td>"탈퇴 후 모든 데이터가 삭제되며 복구할 수 없습니다"</td></tr>
+                        <tr><td>버튼 1</td><td>[탈퇴하기] → 탈퇴 처리</td></tr>
+                        <tr><td>버튼 2</td><td>[취소] → 팝업 닫힘</td></tr>
+                    </table>
+
+                    <h3>탈퇴 완료</h3>
+                    <table>
+                        <tr><th>동작</th><th>내용</th></tr>
+                        <tr><td>토스트</td><td>"탈퇴가 완료되었습니다"</td></tr>
+                        <tr><td>이동</td><td>로그인 화면</td></tr>
+                    </table>
+                </section>
+
+                <section id="accessibility">
+                    <h2>접근성</h2>
+                    <h3>마이페이지 메인</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>화면 진입</td><td>"마이페이지"</td></tr>
+                        <tr><td>프로필</td><td>"닉네임, 이메일"</td></tr>
+                        <tr><td>멤버십 상태</td><td>"멤버십 상태, AI포미 패스 이용 중"</td></tr>
+                    </table>
+
+                    <h3>설정 항목</h3>
+                    <table>
+                        <tr><th>타입</th><th>처리</th></tr>
+                        <tr><td>토글</td><td>"알림 설정, 스위치, 켜짐/꺼짐"</td></tr>
+                        <tr><td>선택</td><td>"화면 모드, 현재 시스템 설정. 이중 탭 하여 변경"</td></tr>
+                        <tr><td>슬라이더</td><td>"글자 크기, 현재 보통. 스와이프 하여 조절"</td></tr>
+                    </table>
+
+                    <h3>회원 탈퇴</h3>
+                    <table>
+                        <tr><th>항목</th><th>처리</th></tr>
+                        <tr><td>안내 화면</td><td>모든 안내 사항 순차 읽기</td></tr>
+                        <tr><td>사유 선택</td><td>"탈퇴 사유, 라디오 버튼, 5개 중 N번째"</td></tr>
+                        <tr><td>최종 확인</td><td>경고 내용 명확히 안내</td></tr>
+                    </table>
+
+                    <h3>포커스 순서</h3>
+                    <p>프로필 영역 → 프로필 수정 → 멤버십 영역 → 멤버십 관리 → 메뉴 목록 → 탭 바</p>
+                </section>
+
+                <footer>
+                    <p>&copy; 2025 Sigongan. All rights reserved.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+
+        function getSystemTheme() { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+        function getCurrentTheme() { return localStorage.getItem('theme') || null; }
+        function setTheme(theme) {
+            if (theme === null) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+        }
+        function toggleTheme() {
+            const c = getCurrentTheme(), s = getSystemTheme();
+            if (c === null) setTheme(s === 'dark' ? 'light' : 'dark');
+            else if (c === 'dark') setTheme('light');
+            else setTheme('dark');
+        }
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('open');
+        }
+
+        function toggleSection(el) {
+            el.parentElement.classList.toggle('collapsed');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const t = getCurrentTheme();
+            if (t) document.documentElement.setAttribute('data-theme', t);
+        });
+    </script>
+</body>
+</html>
