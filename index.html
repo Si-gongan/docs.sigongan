@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigongan Docs - 디지털 정보 접근성 솔루션</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --border: #d0d7de;
+            --shadow: rgba(31, 35, 40, 0.12);
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0d1117;
+                --bg-secondary: #161b22;
+                --bg-tertiary: #21262d;
+                --text-primary: #e6edf3;
+                --text-secondary: #8b949e;
+                --accent: #58a6ff;
+                --border: #30363d;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 48px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+        .header-logo {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 10px;
+        }
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .header h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        .header .tagline {
+            font-size: 2.5rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+        }
+        .service-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 52px 40px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .service-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 12px 32px var(--shadow);
+            transform: translateY(-6px);
+        }
+        .service-card-full {
+            grid-column: 1 / -1;
+        }
+        .service-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .service-card-full .service-logo {
+            width: 160px;
+            height: 160px;
+            border-radius: 32px;
+        }
+        .service-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .service-card h2 {
+            font-size: 2.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        .service-card .slogan {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .slogan-sigonganax {
+            color: #1f2328 !important;
+        }
+        [data-theme="dark"] .slogan-sigonganax {
+            color: #ffffff !important;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .slogan-sigonganax {
+                color: #ffffff !important;
+            }
+        }
+        .service-card p {
+            font-size: 1.85rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 28px;
+            right: 28px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 640px) {
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="테마 변경">
+        <span class="theme-icon">&#9789;</span>
+    </button>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-logo">
+                <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/sigongan-logo.png" alt="시공간 로고">
+            </div>
+            <h1>Sigongan</h1>
+            <p class="tagline">디지털 정보 접근성 솔루션</p>
+        </header>
+
+        <div class="service-grid">
+            <a href="/pickforme" class="service-card">
+                <div class="service-logo">
+                    <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/pickforme-logo.png" alt="픽포미 로고">
+                </div>
+                <h2>픽포미</h2>
+                <span class="slogan" style="color: #0969da;">나를 위한 쉽고 스마트한 AI 쇼핑앱</span>
+                <p>시각장애인을 위한 AI 쇼핑앱</p>
+            </a>
+
+            <a href="/aitag" class="service-card">
+                <div class="service-logo">
+                    <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/aitag-logo.png" alt="에이텍 로고">
+                </div>
+                <h2>에이텍</h2>
+                <span class="slogan" style="color: #0d9488;">모두를 위한 디지털 접근성</span>
+                <p>AI 대체 텍스트 자동화 솔루션</p>
+            </a>
+
+            <a href="/woorisori" class="service-card">
+                <div class="service-logo">
+                    <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/woorisori-logo.png" alt="우리소리 로고">
+                </div>
+                <h2>우리소리</h2>
+                <span class="slogan" style="color: #ec4899;">소리로 연결되는 우리의 이야기</span>
+                <p>시각장애인을 위한 접근성 최적화 커뮤니티 앱</p>
+            </a>
+
+            <a href="/sorialbum" class="service-card">
+                <div class="service-logo">
+                    <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/sorialbum-logo.png" alt="소리앨범 로고">
+                </div>
+                <h2>소리앨범</h2>
+                <span class="slogan" style="color: #8b5cf6;">소리로 듣는 나만의 앨범</span>
+                <p>AI 갤러리형 사진해설 앱</p>
+            </a>
+
+            <a href="/sigonganax" class="service-card service-card-full">
+                <div class="service-logo">
+                    <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/sigonganax-logo.png" alt="SigonganAX 로고">
+                </div>
+                <h2>SigonganAX</h2>
+                <span class="slogan slogan-sigonganax">정보 격차를 줄이는 AI</span>
+                <p>접근성 특화 버티컬 AI 모델</p>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Sigongan. All rights reserved.
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : (current === 'light' ? 'dark' :
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeIcon(next);
+        }
+        function updateThemeIcon(theme) {
+            const icon = document.querySelector('.theme-icon');
+            const isDark = theme === 'dark' || (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            icon.innerHTML = isDark ? '&#9788;' : '&#9789;';
+        }
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved) {
+                document.documentElement.setAttribute('data-theme', saved);
+            }
+            updateThemeIcon(saved || 'system');
+        })();
+    </script>
+</body>
+</html>

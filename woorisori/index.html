@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PickForMe - Documentation</title>
+    <title>우리소리 - Documentation</title>
     <style>
         :root {
             --bg-primary: #ffffff;
@@ -11,7 +11,7 @@
             --bg-tertiary: #eaeef2;
             --text-primary: #1f2328;
             --text-secondary: #656d76;
-            --accent: #0969da;
+            --accent: #ec4899;
             --border: #d0d7de;
             --shadow: rgba(31, 35, 40, 0.12);
         }
@@ -21,7 +21,7 @@
             --bg-tertiary: #21262d;
             --text-primary: #e6edf3;
             --text-secondary: #8b949e;
-            --accent: #58a6ff;
+            --accent: #f472b6;
             --border: #30363d;
             --shadow: rgba(0, 0, 0, 0.3);
         }
@@ -32,7 +32,7 @@
                 --bg-tertiary: #21262d;
                 --text-primary: #e6edf3;
                 --text-secondary: #8b949e;
-                --accent: #58a6ff;
+                --accent: #f472b6;
                 --border: #30363d;
                 --shadow: rgba(0, 0, 0, 0.3);
             }
@@ -53,6 +53,8 @@
             margin: 0 auto;
             padding: 60px 24px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .breadcrumb {
             font-size: 0.9rem;
@@ -66,58 +68,79 @@
         .breadcrumb a:hover {
             text-decoration: underline;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .header p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-        }
-        .version-list {
+        .content {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 0;
         }
-        .version-card {
-            display: block;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            text-decoration: none;
-            transition: all 0.2s ease;
+        .header-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 24px;
         }
-        .version-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 4px 12px var(--shadow);
-            transform: translateY(-2px);
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
-        .version-card h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
+        .content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
             margin-bottom: 8px;
         }
-        .version-card p {
+        .content .slogan {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .content .description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+        .coming-soon-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .coming-soon-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        .coming-soon-box h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .coming-soon-box p {
             font-size: 0.95rem;
             color: var(--text-secondary);
+            margin-bottom: 24px;
         }
-        .version-badge {
+        .back-btn {
             display: inline-block;
             background: var(--accent);
             color: #fff;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-left: 8px;
-            vertical-align: middle;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
         }
         .theme-toggle {
             position: fixed;
@@ -156,19 +179,23 @@
 
     <div class="container">
         <div class="breadcrumb">
-            <a href="/">Sigongan Docs</a> / 픽포미
+            <a href="/">Sigongan Docs</a> / 우리소리
         </div>
 
-        <div class="header">
-            <h1>PickForMe</h1>
-            <p>시각장애인을 위한 쇼핑 앱 기술 문서</p>
-        </div>
+        <div class="content">
+            <div class="header-logo">
+                <img src="https://sigongan-s3.s3.ap-northeast-2.amazonaws.com/public/woorisori-logo.png" alt="우리소리 로고">
+            </div>
+            <h1>우리소리</h1>
+            <p class="slogan">소리로 연결되는 우리의 이야기</p>
+            <p class="description">쇼핑과 정보를 포함한 일상 속 질문과 경험을 자유롭게 나누며, 신뢰를 기반으로 자연스러운 교류가 이루어지는 커뮤니티</p>
 
-        <div class="version-list">
-            <a href="/pickforme/v3.5.0" class="version-card">
-                <h2>v3.5.0 <span class="version-badge">Latest</span></h2>
-                <p>기능명세서 9개 문서, 유저스토리 포함</p>
-            </a>
+            <div class="coming-soon-box">
+                <div class="coming-soon-icon">📝</div>
+                <h2>문서 준비 중입니다</h2>
+                <p>우리소리 기술 문서를 열심히 준비하고 있습니다.<br>조금만 기다려 주세요!</p>
+                <a href="/" class="back-btn">홈으로 돌아가기</a>
+            </div>
         </div>
     </div>
 
