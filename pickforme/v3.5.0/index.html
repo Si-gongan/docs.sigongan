@@ -37,47 +37,42 @@
                 --shadow: rgba(0, 0, 0, 0.3);
             }
         }
-        html { font-size: 50%; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            line-height: 1.7;
+            line-height: 1.6;
             transition: background-color 0.3s ease, color 0.3s ease;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: stretch;
         }
         .container {
             width: 100%;
-            max-width: 1800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 100px 80px;
+            padding: 48px 24px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: stretch;
         }
         .breadcrumb {
             display: flex;
-            width: 100%;
             align-items: center;
-            gap: 16px;
-            font-size: 2.5rem;
+            gap: 8px;
+            font-size: 0.875rem;
             color: var(--text-secondary);
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 32px;
-            margin-bottom: 80px;
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 40px;
         }
         .breadcrumb .home-icon {
-            font-size: 2.8rem;
+            font-size: 1rem;
         }
         .breadcrumb .separator {
-            color: var(--text-secondary);
             opacity: 0.6;
         }
         .breadcrumb a {
@@ -93,41 +88,40 @@
             font-weight: 600;
         }
         .header {
-            margin-bottom: 80px;
+            margin-bottom: 40px;
         }
         .header h1 {
-            font-size: 5rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
         .header p {
-            font-size: 2.2rem;
+            font-size: 0.875rem;
             color: var(--text-secondary);
         }
         .section {
-            margin-bottom: 60px;
+            margin-bottom: 32px;
         }
         .section-title {
-            font-size: 2.5rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 24px;
-            padding-bottom: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--border);
         }
         .doc-list {
             display: flex;
             flex-direction: column;
-            align-items: stretch;
-            gap: 16px;
+            gap: 8px;
         }
         .doc-item {
             display: flex;
             align-items: center;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px 32px;
+            border-radius: 8px;
+            padding: 12px 16px;
             text-decoration: none;
             transition: all 0.2s ease;
         }
@@ -136,21 +130,21 @@
             background: var(--bg-tertiary);
         }
         .doc-number {
-            font-size: 2rem;
+            font-size: 0.875rem;
             font-weight: 600;
             color: var(--accent);
-            min-width: 48px;
+            min-width: 24px;
         }
         .doc-title {
-            font-size: 2.2rem;
+            font-size: 0.875rem;
             font-weight: 500;
             color: var(--text-primary);
         }
         .single-doc {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px 32px;
+            border-radius: 8px;
+            padding: 12px 16px;
             text-decoration: none;
             display: block;
             transition: all 0.2s ease;
@@ -164,10 +158,10 @@
         }
         .theme-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 1px solid var(--border);
             background: var(--bg-secondary);
@@ -176,7 +170,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1rem;
             transition: all 0.2s ease;
             z-index: 1000;
         }
@@ -185,9 +179,9 @@
         }
         footer {
             text-align: center;
-            padding: 48px;
+            padding: 24px;
             color: var(--text-secondary);
-            font-size: 2.4rem;
+            font-size: 0.875rem;
             border-top: 1px solid var(--border);
         }
     </style>
@@ -199,7 +193,7 @@
 
     <div class="container">
         <nav class="breadcrumb">
-            <span class="home-icon">⌂</span>
+            <span class="home-icon">&#8962;</span>
             <a href="/">docs.sigongan</a>
             <span class="separator">›</span>
             <a href="/pickforme">픽포미</a>
