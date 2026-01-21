@@ -47,33 +47,58 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: stretch;
         }
         .container {
-            max-width: 800px;
+            width: 100%;
+            max-width: 1800px;
             margin: 0 auto;
-            padding: 60px 24px;
+            padding: 100px 80px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
         }
         .breadcrumb {
-            font-size: 0.9rem;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            gap: 16px;
+            font-size: 2.5rem;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 32px;
+            margin-bottom: 60px;
+        }
+        .breadcrumb .home-icon {
+            font-size: 2.8rem;
+        }
+        .breadcrumb .separator {
+            color: var(--text-secondary);
+            opacity: 0.6;
         }
         .breadcrumb a {
             color: var(--accent);
             text-decoration: none;
+            font-weight: 500;
         }
         .breadcrumb a:hover {
             text-decoration: underline;
         }
+        .breadcrumb .current {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
         .header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 100px;
         }
         .header-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 16px;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
         }
         .header-logo img {
             width: 100%;
@@ -81,66 +106,69 @@
             object-fit: contain;
         }
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 5rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .header .slogan {
-            font-size: 1.1rem;
+            font-size: 2.5rem;
             color: var(--accent);
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
         .header p {
-            font-size: 1rem;
+            font-size: 2.2rem;
             color: var(--text-secondary);
         }
         .version-list {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            align-items: stretch;
+            gap: 32px;
         }
         .version-card {
+            width: 100%;
             display: block;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
+            border-radius: 24px;
+            padding: 60px;
             text-decoration: none;
             transition: all 0.2s ease;
         }
         .version-card:hover {
             border-color: var(--accent);
-            box-shadow: 0 4px 12px var(--shadow);
-            transform: translateY(-2px);
+            box-shadow: 0 12px 32px var(--shadow);
+            transform: translateY(-6px);
         }
         .version-card h2 {
-            font-size: 1.25rem;
+            font-size: 2.75rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
         .version-card p {
-            font-size: 0.95rem;
+            font-size: 1.85rem;
             color: var(--text-secondary);
         }
         .version-badge {
             display: inline-block;
             background: var(--accent);
             color: #fff;
-            font-size: 0.75rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-left: 8px;
+            padding: 8px 20px;
+            border-radius: 24px;
+            margin-left: 16px;
             vertical-align: middle;
         }
         .theme-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
+            top: 28px;
+            right: 28px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             border: 1px solid var(--border);
             background: var(--bg-secondary);
@@ -149,7 +177,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 2.5rem;
             transition: all 0.2s ease;
             z-index: 1000;
         }
@@ -158,9 +186,9 @@
         }
         footer {
             text-align: center;
-            padding: 24px;
+            padding: 40px;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 2.2rem;
             border-top: 1px solid var(--border);
         }
     </style>
@@ -171,9 +199,12 @@
     </button>
 
     <div class="container">
-        <div class="breadcrumb">
-            <a href="/">Sigongan Docs</a> / 에이텍
-        </div>
+        <nav class="breadcrumb">
+            <span class="home-icon">⌂</span>
+            <a href="/">docs.sigongan</a>
+            <span class="separator">›</span>
+            <span class="current">에이텍</span>
+        </nav>
 
         <div class="header">
             <div class="header-logo">
@@ -181,7 +212,7 @@
             </div>
             <h1>에이텍</h1>
             <p class="slogan">모두를 위한 디지털 접근성</p>
-            <p>기업 및 기관의 접근성 준수와 콘텐츠 운영 효율을 높이는 AI 대체 텍스트 자동화 솔루션</p>
+            <p>기업 및 기관의 접근성 준수와 콘텐츠 운영 효율을 높이는<br>AI 대체 텍스트 자동화 솔루션</p>
         </div>
 
         <div class="version-list">

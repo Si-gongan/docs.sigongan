@@ -65,23 +65,46 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1800px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 100px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
         }
 
         /* Breadcrumb */
         .breadcrumb {
-            font-size: 0.9rem;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            gap: 16px;
+            font-size: 2.5rem;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 32px;
+            margin-bottom: 80px;
+        }
+        .breadcrumb .home-icon {
+            font-size: 2.8rem;
+        }
+        .breadcrumb .separator {
+            color: var(--text-secondary);
+            opacity: 0.6;
         }
         .breadcrumb a {
             color: var(--accent);
             text-decoration: none;
+            font-weight: 500;
         }
         .breadcrumb a:hover {
             text-decoration: underline;
+        }
+        .breadcrumb .current {
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         /* Theme Toggle Button */
@@ -156,61 +179,61 @@
         /* Header */
         .header {
             text-align: center;
-            padding: 60px 0;
+            padding: 100px 0;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 48px;
+            margin-bottom: 100px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 5rem;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 32px;
             color: var(--text-primary);
         }
 
         .header .subtitle {
-            font-size: 1.1rem;
+            font-size: 2.5rem;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            margin-bottom: 40px;
         }
 
         .launch-date {
             display: inline-block;
             background: var(--accent);
             color: #fff;
-            padding: 8px 24px;
-            border-radius: 24px;
+            padding: 24px 56px;
+            border-radius: 48px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 2rem;
         }
 
         /* Table of Contents */
         .toc {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px 32px;
-            margin-bottom: 48px;
+            border-radius: 24px;
+            padding: 56px 72px;
+            margin-bottom: 100px;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .toc h2 {
-            font-size: 1.1rem;
-            margin-bottom: 16px;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
             color: var(--text-secondary);
         }
 
         .toc ul {
             list-style: none;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
         }
 
         .toc a {
             color: var(--accent);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 2rem;
         }
 
         .toc a:hover {
@@ -219,47 +242,48 @@
 
         /* Sections */
         section {
-            margin-bottom: 64px;
+            margin-bottom: 120px;
         }
 
         h2 {
-            font-size: 1.75rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--accent);
+            margin-bottom: 60px;
+            padding-bottom: 28px;
+            border-bottom: 4px solid var(--accent);
             color: var(--text-primary);
         }
 
         h3 {
-            font-size: 1.25rem;
+            font-size: 2.8rem;
             font-weight: 600;
-            margin: 32px 0 16px 0;
+            margin: 72px 0 40px 0;
             color: var(--text-primary);
         }
 
         h4 {
-            font-size: 1.1rem;
+            font-size: 2.8rem;
             font-weight: 600;
-            margin: 24px 0 12px 0;
+            margin: 56px 0 28px 0;
             color: var(--text-secondary);
         }
 
         p {
-            margin-bottom: 16px;
+            margin-bottom: 36px;
             color: var(--text-secondary);
+            font-size: 2rem;
         }
 
         /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0 24px 0;
-            font-size: 0.95rem;
+            margin: 40px 0 60px 0;
+            font-size: 1.9rem;
         }
 
         th, td {
-            padding: 12px 16px;
+            padding: 32px 40px;
             text-align: left;
             border: 1px solid var(--border);
             transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -279,10 +303,10 @@
         /* Info Box */
         .info-box {
             background: var(--bg-secondary);
-            border-left: 4px solid var(--accent);
-            padding: 16px 20px;
-            margin: 16px 0;
-            border-radius: 0 8px 8px 0;
+            border-left: 8px solid var(--accent);
+            padding: 36px 48px;
+            margin: 36px 0;
+            border-radius: 0 16px 16px 0;
             transition: background-color 0.3s ease;
         }
 
@@ -292,33 +316,34 @@
 
         .info-box p {
             margin: 0;
+            font-size: 1.9rem;
         }
 
         /* Feature Cards */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin: 24px 0;
+            gap: 36px;
+            margin: 56px 0;
         }
 
         .feature-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 48px;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .feature-card h4 {
-            margin: 0 0 8px 0;
+            margin: 0 0 24px 0;
             color: var(--accent);
-            font-size: 1rem;
+            font-size: 2.3rem;
         }
 
         .feature-card p {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 1.9rem;
         }
 
         /* Flow Diagram */
@@ -327,47 +352,197 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
-            margin: 24px 0;
+            gap: 28px;
+            margin: 56px 0;
         }
 
         .flow-item {
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            padding: 16px 20px;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            padding: 40px 56px;
+            border-radius: 20px;
+            font-size: 1.9rem;
             text-align: center;
             transition: background-color 0.3s ease, border-color 0.3s ease;
             flex: 1;
-            min-width: 100px;
+            min-width: 180px;
         }
 
         .flow-arrow {
             color: var(--accent);
-            font-size: 1.2rem;
+            font-size: 2.5rem;
             flex-shrink: 0;
         }
 
         /* Mermaid */
         .mermaid {
             background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 24px;
-            margin: 24px 0;
+            border-radius: 24px;
+            padding: 48px;
+            margin: 48px 0;
             text-align: center;
             transition: background-color 0.3s ease;
         }
 
+        /* Roadmap */
+        .roadmap-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 48px 0;
+            flex-wrap: wrap;
+        }
+
+        .roadmap-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            min-width: 280px;
+            flex: 1;
+            max-width: 400px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .roadmap-current {
+            border-color: var(--accent);
+        }
+
+        .roadmap-future {
+            border-style: dashed;
+        }
+
+        .roadmap-header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .roadmap-current .roadmap-header {
+            color: var(--accent);
+        }
+
+        .roadmap-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .roadmap-list li {
+            font-size: 2.5rem;
+            padding: 12px 0;
+            color: var(--text-secondary);
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .roadmap-list li:last-child {
+            border-bottom: none;
+        }
+
+        .roadmap-arrow {
+            font-size: 2.8rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .roadmap-container {
+                flex-direction: column;
+            align-items: stretch;
+            }
+            .roadmap-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Timeline */
+        .timeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            margin: 56px 0;
+            flex-wrap: wrap;
+            background: var(--bg-secondary);
+            border-radius: 28px;
+            padding: 64px;
+        }
+
+        .timeline-item {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 32px 28px;
+            text-align: center;
+            width: 220px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            border-color: var(--accent);
+        }
+
+        .timeline-launch {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .timeline-launch .timeline-title {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .timeline-week {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .timeline-arrow {
+            font-size: 2.5rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .timeline-container {
+                flex-direction: column;
+            align-items: stretch;
+                gap: 16px;
+            }
+            .timeline-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
         /* Lists */
         ul, ol {
-            margin: 16px 0;
-            padding-left: 24px;
+            margin: 36px 0;
+            padding-left: 48px;
         }
 
         li {
-            margin-bottom: 8px;
+            margin-bottom: 24px;
             color: var(--text-secondary);
+            font-size: 1.9rem;
         }
 
         /* Steps */
@@ -379,8 +554,9 @@
 
         .steps li {
             position: relative;
-            padding-left: 48px;
-            margin-bottom: 16px;
+            padding-left: 96px;
+            margin-bottom: 40px;
+            font-size: 1.9rem;
         }
 
         .steps li::before {
@@ -388,8 +564,8 @@
             content: counter(step);
             position: absolute;
             left: 0;
-            width: 32px;
-            height: 32px;
+            width: 72px;
+            height: 72px;
             background: var(--accent);
             color: #fff;
             border-radius: 50%;
@@ -397,35 +573,35 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 2.5rem;
         }
 
         /* Metrics */
         .metrics {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin: 24px 0;
+            gap: 36px;
+            margin: 56px 0;
         }
 
         .metric {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 48px;
             text-align: center;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .metric-value {
-            font-size: 1.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
             color: var(--accent);
-            margin-bottom: 4px;
+            margin-bottom: 20px;
         }
 
         .metric-label {
-            font-size: 0.85rem;
+            font-size: 2.5rem;
             color: var(--text-secondary);
         }
 
@@ -433,14 +609,15 @@
         .contact-box {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 32px;
+            border-radius: 28px;
+            padding: 72px;
             text-align: center;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .contact-box h3 {
             margin-top: 0;
+            font-size: 3.2rem;
         }
 
         .contact-box a {
@@ -450,10 +627,10 @@
         /* Footer */
         footer {
             text-align: center;
-            padding: 48px 0;
+            padding: 80px 0;
             border-top: 1px solid var(--border);
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 5rem;
         }
 
         /* Responsive */
@@ -473,6 +650,7 @@
 
             .flow {
                 flex-direction: column;
+            align-items: stretch;
             }
 
             .flow-arrow {
@@ -504,7 +682,12 @@
     <div class="container">
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
-            <a href="/">Sigongan Docs</a> / <a href="/aitag">에이텍</a> / v3-pre-release
+            <span class="home-icon">⌂</span>
+            <a href="/">docs.sigongan</a>
+            <span class="separator">›</span>
+            <a href="/aitag">에이텍</a>
+            <span class="separator">›</span>
+            <span class="current">v3-pre-release</span>
         </nav>
 
         <!-- Header -->
@@ -822,15 +1005,30 @@
             <h2>5. 개발 일정</h2>
 
             <h3>5.1 전체 타임라인</h3>
-            <div class="mermaid">
-                flowchart TB
-                    W1["Week 1: 기반 구축"]
-                    W2["Week 2: 핵심 기능"]
-                    W3["Week 3: 완성"]
-                    W4["Week 4: QA 및 배포"]
-                    LAUNCH["런칭"]
-                    
-                    W1 --> W2 --> W3 --> W4 --> LAUNCH
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 1</div>
+                    <div class="timeline-title">기반 구축</div>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 2</div>
+                    <div class="timeline-title">핵심 기능</div>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 3</div>
+                    <div class="timeline-title">완성</div>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 4</div>
+                    <div class="timeline-title">QA 및 배포</div>
+                </div>
+                <div class="timeline-arrow">→</div>
+                <div class="timeline-item timeline-launch">
+                    <div class="timeline-title">런칭</div>
+                </div>
             </div>
 
             <h3>5.2 주간 마일스톤</h3>
@@ -940,23 +1138,26 @@
             <h2>7. 향후 계획</h2>
             <p>v3.0.0 런칭 이후, 서비스 안정화 단계에서 아래 기능들을 순차적으로 추가할 예정입니다.</p>
 
-            <div class="mermaid">
-                flowchart TB
-                    subgraph MVP["v3.0.0 (2/11 런칭)"]
-                        M1["대체텍스트 생성"]
-                        M2["인증/권한"]
-                        M3["히스토리"]
-                        M4["일괄처리"]
-                        M5["모니터링"]
-                    end
-                    
-                    subgraph FUTURE["향후 추가 예정"]
-                        F1["상세 통계"]
-                        F2["결과 내보내기"]
-                        F3["프롬프트 관리"]
-                    end
-                    
-                    MVP --> FUTURE
+            <div class="roadmap-container">
+                <div class="roadmap-card roadmap-current">
+                    <div class="roadmap-header">v3.0.0 (2/11 런칭)</div>
+                    <ul class="roadmap-list">
+                        <li>대체텍스트 생성</li>
+                        <li>인증/권한</li>
+                        <li>히스토리</li>
+                        <li>일괄처리</li>
+                        <li>모니터링</li>
+                    </ul>
+                </div>
+                <div class="roadmap-arrow">→</div>
+                <div class="roadmap-card roadmap-future">
+                    <div class="roadmap-header">향후 추가 예정</div>
+                    <ul class="roadmap-list">
+                        <li>상세 통계</li>
+                        <li>결과 내보내기</li>
+                        <li>프롬프트 관리</li>
+                    </ul>
+                </div>
             </div>
 
             <table>

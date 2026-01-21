@@ -15,7 +15,7 @@
             --border: #d0d7de;
             --warning: #9a6700;
             --shadow: rgba(31, 35, 40, 0.12);
-            --sidebar-width: 280px;
+            --sidebar-width: 360px;
         }
         [data-theme="dark"] {
             --bg-primary: #0d1117;
@@ -73,14 +73,14 @@
             margin-bottom: 16px;
         }
         .sidebar-header h1 {
-            font-size: 1.25rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 4px;
         }
         .sidebar-header .home-link {
             display: block;
-            font-size: 0.75rem;
+            font-size: 2rem;
             color: var(--text-secondary);
             text-decoration: none;
             margin-bottom: 8px;
@@ -98,7 +98,7 @@
         .sidebar-header .version {
             display: inline-block;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 1.8rem;
             color: var(--text-secondary);
         }
         .sidebar-header .version:hover {
@@ -111,8 +111,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 12px;
-            font-size: 0.9rem;
+            padding: 12px 16px;
+            font-size: 2rem;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
@@ -121,7 +121,7 @@
         }
         .nav-section-title:hover { background: var(--bg-tertiary); }
         .nav-section-title .arrow {
-            font-size: 0.75rem;
+            font-size: 2rem;
             transition: transform 0.2s;
         }
         .nav-section.collapsed .arrow { transform: rotate(-90deg); }
@@ -129,8 +129,8 @@
         .nav-items { list-style: none; padding: 4px 0 4px 8px; }
         .nav-item a {
             display: block;
-            padding: 8px 12px;
-            font-size: 0.875rem;
+            padding: 12px 16px;
+            font-size: 1.8rem;
             color: var(--text-secondary);
             text-decoration: none;
             border-radius: 6px;
@@ -147,8 +147,8 @@
         }
         .nav-link-single {
             display: block;
-            padding: 10px 12px;
-            font-size: 0.9rem;
+            padding: 12px 16px;
+            font-size: 2rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-decoration: none;
@@ -171,7 +171,7 @@
             margin-left: var(--sidebar-width);
             min-width: 0;
         }
-        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+        .container { max-width: 1800px; margin: 0 auto; padding: 100px 80px; }
 
         /* Theme Toggle */
         .theme-toggle {
@@ -231,34 +231,34 @@
 
         /* Header */
         .header { text-align: center; padding: 60px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
-        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
-        .header .subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; }
-        .header .meta { font-size: 0.9rem; color: var(--text-secondary); }
+        .header h1 { font-size: 5rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+        .header .subtitle { font-size: 2.2rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .header .meta { font-size: 2rem; color: var(--text-secondary); }
 
         /* TOC */
         .toc { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 48px; }
-        .toc h2 { font-size: 1.1rem; margin-bottom: 16px; color: var(--text-secondary); border: none; padding: 0; }
+        .toc h2 { font-size: 2rem; margin-bottom: 16px; color: var(--text-secondary); border: none; padding: 0; }
         .toc ul { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .toc a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+        .toc a { color: var(--accent); text-decoration: none; font-size: 1.8rem; }
         .toc a:hover { text-decoration: underline; }
 
         /* Content */
         section { margin-bottom: 64px; }
-        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); color: var(--text-primary); }
-        h3 { font-size: 1.25rem; font-weight: 600; margin: 32px 0 16px 0; color: var(--text-primary); }
-        h4 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 12px 0; color: var(--text-secondary); }
-        p { margin-bottom: 16px; color: var(--text-secondary); }
-        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 0.95rem; }
+        h2 { font-size: 4rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); color: var(--text-primary); }
+        h3 { font-size: 3rem; font-weight: 600; margin: 32px 0 16px 0; color: var(--text-primary); }
+        h4 { font-size: 2.4rem; font-weight: 600; margin: 24px 0 12px 0; color: var(--text-secondary); }
+        p { margin-bottom: 16px; color: var(--text-secondary); font-size: 2rem; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 1.9rem; }
         th, td { padding: 12px 16px; text-align: left; border: 1px solid var(--border); }
         th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
         td { background: var(--bg-secondary); color: var(--text-secondary); }
         .info-box { background: var(--bg-secondary); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
         .info-box p { margin: 0; }
         ul, ol { margin: 16px 0; padding-left: 24px; }
-        li { margin-bottom: 8px; color: var(--text-secondary); }
-        pre { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.9rem; color: var(--text-primary); font-family: 'SFMono-Regular', Consolas, monospace; white-space: pre-wrap; }
+        li { margin-bottom: 8px; color: var(--text-secondary); font-size: 1.9rem; }
+        pre { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 1.1rem; color: var(--text-primary); font-family: 'SFMono-Regular', Consolas, monospace; white-space: pre-wrap; }
         .mermaid { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; overflow-x: auto; }
-        footer { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9rem; }
+        footer { text-align: center; padding: 48px 0; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 4rem; }
 
         /* Responsive */
         @media (max-width: 1024px) {
@@ -289,7 +289,7 @@
     <div class="layout">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <a href="/" class="home-link">Sigongan Docs</a>
+                <a href="/" class="home-link">docs.sigongan</a>
                 <h1><a href="/pickforme">PickForMe</a></h1>
                 <a href="/pickforme/v3.5.0" class="version">v3.5.0</a>
             </div>
